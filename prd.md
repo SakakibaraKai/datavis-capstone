@@ -119,7 +119,7 @@ The platform will integrate with a suite of third-party services vital for its c
 
 Users of the dashboard will see analytics pages as such:
 
-![alt text](https://github.com/brinklju/datavis-capstone/blob/main/mockup-front.png)
+![alt text](https://github.com/brinklju/datavis-capstone/blob/main/document-images/mockup-front.png)
 
 User Experience Design Principles: We want to focus on giving the user an appropriate amount of control within the dashboard UI. We want them to have the freedom to analyze the data as they want or need. With the amount of data that is being analyzed, we also want to give them an easy way to undo mistakes or revert changes.
 
