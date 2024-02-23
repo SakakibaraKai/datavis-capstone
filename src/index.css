@@ -135,3 +135,8 @@ padding-right: 32px;
 nav .active {
 background-color: #f3d8ed;
 }
+
+/* search form  */
+.search-form {
+  margin-top: 20px;
+}

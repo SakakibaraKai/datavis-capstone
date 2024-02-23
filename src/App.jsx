@@ -3,7 +3,6 @@ import { useState, useEffect, useContext } from 'react';
 import { Link, NavLink, Outlet, useParams, useRouteError, useLocation } from 'react-router-dom';
 import PersonData from './data/people.json'; // bring Data
 
-
 export function Root() {
     const [activeNav, setActiveNav] = useState(null); 
     const [navClick, setnavClick] = useState(0);
