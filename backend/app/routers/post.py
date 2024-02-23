@@ -18,10 +18,11 @@ async def create_user(user_id: int):
 
 @router.post('/datafetch')
 async def fetch_data(req: dict):
-    name = req.get("name")
-    print(req['name'])
-    print(name)
-
+    if req:
+        print("Successfully POST request was sent from frontend!")
+    else:
+        print("failed to POST request")
+    
     return {
         "status": 200,
         "data": req
