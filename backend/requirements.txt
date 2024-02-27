@@ -5,3 +5,4 @@ flask-cors
 requests>=2.27.1
 json2html
 python-jose
+pymysql
