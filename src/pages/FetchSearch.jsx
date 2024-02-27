@@ -43,9 +43,9 @@ export default function Search() {
 
 
     // Post to BackEnd port 8080:
-    async function sendPost(responsebody) {
-        console.log("== responsebody:", responsebody)
-        console.log("== Type:", typeof responsebody);
+    async function sendPost(responsebody, city) {
+        console.log("==city", city)
+        responsebody.city = city // add 'city' into responsebody object
         const res = await fetch(
             "http://localhost:8080/datafetch",
             {
@@ -91,8 +91,7 @@ export default function Search() {
                 
                 setLoading(false)
                 setRepos(responseBody_2.list || []);
-                console.log()
-                sendPost(responseBody_2);
+                sendPost(responseBody_2, inputQuery);
 
             } catch (err) {
                 if (err.name == "AbortError"){
