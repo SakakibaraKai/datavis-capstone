@@ -1,20 +1,20 @@
-from fastapi import FastAPI, APIRouter
-from routers import post, get
-from fastapi.middleware.cors import CORSMiddleware
-import uvicorn
+from routers import post, get, delete, put
+from flask import Flask, render_template, session
+from dotenv import load_dotenv, find_dotenv
+from os import environ as env
+from flask_cors import CORS
 
-app = FastAPI()
+app = Flask(__name__)
+app.register_blueprint(get.bp)
+app.register_blueprint(post.bp)
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],  # allow all origin to access to port : 8080
-    allow_credentials=True,
-    allow_methods=["GET", "POST", "PUT", "DELETE"],
-    allow_headers=["*"],
-)
+CORS(app, resources={r"/*": {"origins": "*"}})
 
-app.include_router(get.router)
-app.include_router(post.router)
+ENV_FILE = find_dotenv("APP_SECRET_KEY")
+if ENV_FILE:
+    load_dotenv(ENV_FILE)
 
-#if __name__ == "__main__":
-#    uvicorn.run(app, host="0.0.0.0", port=8080)
+app.secret_key = env.get("APP_SECRET_KEY")
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=8080, debug=True)

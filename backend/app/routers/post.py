@@ -1,31 +1,25 @@
-from fastapi import FastAPI, APIRouter
-from pydantic import BaseModel
+from flask import Blueprint, request, Flask, jsonify, make_response, session
 from typing import Optional
-
-#import requests
+import requests
 import json
 
-router = APIRouter()
+bp = Blueprint('posts', __name__ )
 
-class DataJson(BaseModel):
-    name: str
-    type: str
-    length: int
-
-@router.post('/user/{user_id}')
-async def create_user(user_id: int):
+@bp.route('/users', methods = ['POST'])
+def create_user(user_id: int):
     return {'id': user_id}
 
-@router.post('/datafetch')
-async def fetch_data(req: dict):
-    if req:
+@bp.route('/datafetch', methods = ['POST'])
+def fetch_data():
+    content = request.get_json()
+    if content:
         print("Successfully POST request was sent from frontend!")
     else:
         print("failed to POST request")
     
     return {
         "status": 200,
-        "data": req
+        "data": content
     }
 
 

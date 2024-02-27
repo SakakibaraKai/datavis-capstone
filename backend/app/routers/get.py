@@ -1,15 +1,15 @@
-from fastapi import FastAPI, APIRouter, Request
+from flask import Blueprint, request, Flask, jsonify, make_response, session
 import requests
 import json
 
-router = APIRouter()
+bp = Blueprint('/gets', __name__)
 
-@router.get('/')
-async def root():
+@bp.route('/', methods = ['GET'])
+def root():
     return {'main': 'this is the main route'}
 
-@router.get('/test')
-async def test():
+@bp.route('/test', methods = ['GET'])
+def test():
     print("GET ")
     return {'test': 'this is a tesst'}
     
