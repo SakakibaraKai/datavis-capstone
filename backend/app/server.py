@@ -3,10 +3,21 @@ from flask import Flask, render_template, session
 from dotenv import load_dotenv, find_dotenv
 from os import environ as env
 from flask_cors import CORS
+import pymysql
 
 app = Flask(__name__)
 app.register_blueprint(get.bp)
 app.register_blueprint(post.bp)
+
+# MySQL 연결 설정
+conn = pymysql.connect(
+    host='localhost',
+    user='root',
+    password='wjdanr90',
+    charset='utf8mb4',
+    cursorclass=pymysql.cursors.DictCursor
+)
+
 
 CORS(app, resources={r"/*": {"origins": "*"}})
 
