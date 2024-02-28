@@ -7,6 +7,7 @@ import Login from './pages/Login'
 import './index.css'
 
 import FetchSearch from './pages/FetchSearch'
+import CreateTable from './pages/CreateTable'
 
 const queryClient = new QueryClient();
 
@@ -26,7 +27,7 @@ const router = createBrowserRouter([
                 ]
             },
             { 
-                path: "/fetchapi", 
+                path: "fetchapi", 
                 element: <FetchSearch />,
                 children: [
                 ] 
@@ -36,8 +37,13 @@ const router = createBrowserRouter([
                 element: <Login />,
                 children: [
                 ] 
-            }
-                
+            },
+            {   
+                path:"insert",
+                element: <CreateTable />,
+                children: [
+                ]
+            } 
         ]
     }
 ])

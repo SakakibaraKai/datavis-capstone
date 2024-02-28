@@ -3,7 +3,7 @@ import { useSearchParams } from 'react-router-dom'
 import { useMutation } from '@tanstack/react-query'
 import Spinner from '../components/Spinner.jsx'
 import ErrorContainer from '../components/ErrorContainer.jsx'
-import WeatherCard from './WeatherCard.jsx'
+import WeatherCard from '../components/WeatherCard.jsx'
 
 const api_key = "a10709164e17f1c60d487330e98d7d27"
 
