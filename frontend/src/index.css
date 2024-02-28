@@ -140,3 +140,29 @@ background-color: #f3d8ed;
 .search-form {
   margin-top: 20px;
 }
+
+.login-page {
+  display: inline-block;
+  padding: 1rem;
+}
+
+.logout{
+  border: 1px solid #ababab;
+  text-align: center;
+  font-size: 1.5rem;
+  background-color: rgb(184, 184, 184);
+  border-radius: .5rem;
+  
+}
+
+.logout:hover {
+  background-color: #2b7bbe;
+  color: white;
+  cursor: pointer;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  margin-top: 2rem;
+}

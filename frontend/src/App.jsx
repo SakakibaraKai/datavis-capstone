@@ -26,6 +26,7 @@ export function Root() {
                     <li><NavLink to="/" onClick={() => handlemainClick()}>main</NavLink></li>
                     <li><NavLink to="/people" onClick={() => handleNavLinkClick("People", 1)} className={activeNav === "People" ? "active" : ""}>People</NavLink></li>
                     <li><NavLink to="/fetchapi" onClick={() => handleNavLinkClick("fetchapi", 2)} className={activeNav === "FetchApi" ? "active" : ""}>FetchApi</NavLink></li>
+                    <li><NavLink to="/login" onClick={() => handleNavLinkClick("login", 4)} className={activeNav === "Login" ? "active" : ""}>Login</NavLink></li>
                 </ul>
             </nav>
             <main>
