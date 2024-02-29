@@ -44,7 +44,6 @@ export function Main() {
             <h2> This is Frontend on our Project</h2>
         </div>
     );
-
 }
 
 export function People() {
@@ -77,7 +76,7 @@ export function People() {
                             <p onClick={handleNextPage} className="pagination-link">...</p>
                         </li>
                     )}
-                 </ul>
+                </ul>
             </aside>
             <div style={{ flex: '1' }}>
                 <Outlet />
