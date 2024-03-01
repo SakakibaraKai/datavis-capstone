@@ -8,7 +8,8 @@ bp = Blueprint('posts', __name__ )
 
 # MySQL connection
 conn = pymysql.connect(
-    host='host.docker.internal',
+    host = 'localhost',
+    #host='host.docker.internal',
     user='root',
     password='wjdanr90',
     charset='utf8mb4',
@@ -34,6 +35,7 @@ def fetch_data():
     }
 
 def create_db(content):
+    print("==content", content)
     print("==", content['city']['name'])
     cityName = content['city']['name']
     cityDB = content['city']['name'] + "DB"
