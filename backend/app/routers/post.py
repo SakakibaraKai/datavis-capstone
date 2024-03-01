@@ -3,21 +3,11 @@ from typing import Optional
 import requests
 import json
 import pymysql
+import bcrypt
+#from .sqlsetup import execute_query
 
 bp = Blueprint('posts', __name__ )
 
-# MySQL connection
-conn = pymysql.connect(
-    host='host.docker.internal',
-    user='root',
-    password='wjdanr90',
-    charset='utf8mb4',
-    cursorclass=pymysql.cursors.DictCursor
-)
-
-@bp.route('/users', methods = ['POST'])
-def create_user(user_id: int):
-    return {'id': user_id}
 
 @bp.route('/datafetch', methods = ['POST'])
 def fetch_data():
@@ -116,3 +106,33 @@ def create_table():
         print("Success")
     else:
         print("failed")
+
+# def validateToken(token:str):
+
+
+
+@bp.route('/register', methods = ['POST'])
+def register():
+    user = json.loads(request.data)
+    if "name" in user and "password" in user and "email" in user:
+        #encrypt password for storage
+        bytes = user["password"].encode('utf-8') 
+        salt = bcrypt.gensalt()
+        hashed_password = bcrypt.hashpw(bytes, salt) 
+        
+        #delete password so we can send the user back
+        if 'password' in user:
+            del user['password']
+
+        #add user to the table
+        error, result = execute_query(
+            "INSERT INTO user (email, name, password) VALUES (%s, %s, %s)" , (user['email'], user['name'], hashed_password)
+        )
+
+        #handle errors
+        if error:
+            return {"error" : result}
+        
+        return(user)
+            
+    return {"error" : "Missing one or more fields!"}
