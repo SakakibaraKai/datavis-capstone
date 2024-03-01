@@ -8,8 +8,7 @@ bp = Blueprint('posts', __name__ )
 
 # MySQL connection
 conn = pymysql.connect(
-    host = 'localhost',
-    #host='host.docker.internal',
+    host='host.docker.internal',
     user='root',
     password='wjdanr90',
     charset='utf8mb4',
