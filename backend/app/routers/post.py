@@ -34,10 +34,10 @@ def fetch_data():
     }
 
 def create_db(content):
-    print("==content", content)
+    print("==content", content['city'])
     print("==", content['city']['name'])
-    cityName = content['city']['name']
-    cityDB = content['city']['name'] + "DB"
+    cityName = content['city']
+    cityDB = content['city'] + "DB"
 
     try: 
         with conn.cursor() as cursor:
