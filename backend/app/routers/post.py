@@ -34,8 +34,7 @@ def fetch_data():
     }
 
 def create_db(content):
-    print("==content", content['city'])
-    print("==", content['city']['name'])
+    print("==", content['city']) # corvallis
     cityName = content['city']
     cityDB = content['city'] + "DB"
 
@@ -64,7 +63,6 @@ def create_initial_table(content, drop_db, city_name):
     col6 = "pressure"
     col7 = "humidity"
     col8 = "description"
-
     try:
         with conn.cursor() as cursor:
             # DB selection
@@ -108,3 +106,13 @@ def create_initial_table(content, drop_db, city_name):
     finally:
         # close connection
         conn.close()
+
+@bp.route('/create', methods = ['POST'])
+def create_table():
+    content = request.get_json()
+    print(content)
+
+    if(content):
+        print("Success")
+    else:
+        print("failed")
