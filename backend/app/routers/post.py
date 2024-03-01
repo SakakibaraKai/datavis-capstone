@@ -3,11 +3,23 @@ from typing import Optional
 import requests
 import json
 import pymysql
-import bcrypt
+#import bcrypt
 #from .sqlsetup import execute_query
 
 bp = Blueprint('posts', __name__ )
 
+# Mysql connection
+conn = pymysql.connect(
+    host='host.docker.internal',
+    user='root',
+    password='wjdanr90',
+    charset='utf8mb4',
+    cursorclass=pymysql.cursors.DictCursor
+)
+
+@bp.route('/users', methods = ['POST'])
+def create_user(user_id: int):
+    return {'id': user_id}
 
 @bp.route('/datafetch', methods = ['POST'])
 def fetch_data():
