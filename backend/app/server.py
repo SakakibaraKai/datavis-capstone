@@ -1,4 +1,4 @@
-from routers import post, get, delete, put
+from app.routers import post, get, delete, put
 from flask import Flask, render_template, session
 from dotenv import load_dotenv, find_dotenv
 from os import environ as env
@@ -11,7 +11,7 @@ app.register_blueprint(post.bp)
 
 # MySQL 연결 설정
 conn = pymysql.connect(
-    host='localhost',
+    host='host.docker.internal',
     user='root',
     password='wjdanr90',
     charset='utf8mb4',
