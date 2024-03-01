@@ -1,0 +1,45 @@
+{
+    "1": {
+      "name": "Jeongmuk",
+      "height": "178",
+      "mass": "68",
+      "birth_year": "19BBY",
+      "gender": "male",
+      "url": "/people/1/"
+    },
+    "2": {
+      "name": "Zoie",
+      "height": "167",
+      "mass": "45",
+      "gender": "female",
+      "url": "/people/2/"
+    },
+    "3": {
+      "name": "Kai",
+      "height": "183",
+      "mass": "62",
+      "gender": "male",
+      "url": "/people/3/"
+    },
+    "4": {
+      "name": "Jonathan",
+      "height": "175",
+      "mass": "70",
+      "gender": "male",
+      "url": "/people/4/"
+    },
+    "5": {
+      "name": "Noah",
+      "height": "180",
+      "mass": "75",
+      "gender": "male",
+      "url": "/people/5/"
+    },
+    "6": {
+      "name": "Juli",
+      "height": "166",
+      "mass": "45",
+      "gender": "female",
+      "url": "/people/6/"
+    }
+  }
