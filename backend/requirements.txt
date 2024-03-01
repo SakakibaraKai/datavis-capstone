@@ -1,9 +1,0 @@
-Flask==3.0.0
-python-dotenv
-python-dotenv>=0.19.2
-flask-cors
-requests>=2.27.1
-json2html
-python-jose
-pymysql
-gunicorn
