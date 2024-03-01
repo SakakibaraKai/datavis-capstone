@@ -106,6 +106,8 @@ export default function CreateTable() {
                 }
             })
         }
+
+        console.log("==dataForm: ", formData)
         // send Post to 8080:create
         fetch('http://localhost:8080/create', {
             method: 'POST',
