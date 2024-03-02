@@ -59,6 +59,15 @@ export default function CreateTable() {
             ...formData,
             database: DataBaseName
         })
+
+        if (!TableName) {
+            console.error('Please Provide a DataBaseName');
+            return
+        } 
+        setFormData({
+            ...formData,
+            tablename: TableName
+        })
         // if Date exist
         if (Date) {
             setFormData({
@@ -69,6 +78,7 @@ export default function CreateTable() {
                 }
             })
         }
+        
         // if Time exist
         if (showTimeSelector) {
             setFormData({
