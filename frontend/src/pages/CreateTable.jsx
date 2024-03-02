@@ -55,10 +55,10 @@ export default function CreateTable() {
             console.error('Please Provide a DataBaseName');
             return
         }
-        if (!TableName) {
-            console.error("Please Provide a Table Name")
-            return
-        }
+        setFormData({
+            ...formData,
+            database: DataBaseName
+        })
         // if Date exist
         if (Date) {
             setFormData({
