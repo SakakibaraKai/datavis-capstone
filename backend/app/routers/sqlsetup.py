@@ -23,6 +23,7 @@ def execute_query(query, params=None):
         except pymysql.Error as e:
             return True, f"Error type: {type(e).__name__}"
 
+        
 #CREATE USER TABLE IF IT DOESN'T ALREADY EXIST
 execute_query(
     """
@@ -34,3 +35,5 @@ execute_query(
         )
     """
 )
+
+    

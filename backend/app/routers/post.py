@@ -116,10 +116,7 @@ def create_table():
 
     if(content):
         print("Success")
-        
-
-        return jsonify({"message": "Success", "content": content}), 200  
-        
+        return jsonify({"message": "Success", "content": "content"}), 200  # Returning a success response
 
     else:
         print("failed")
