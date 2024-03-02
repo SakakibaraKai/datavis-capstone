@@ -112,15 +112,29 @@ def create_initial_table(content, drop_db, city_name):
 @bp.route('/create', methods = ['POST'])
 def create_table():
     content = request.get_json()
-    print(content)
+    query = f"SELECT * FROM {content['database']} WHERE 1"
+    
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute(f"USE {content['database']}")
 
-    if(content):
-        print("Success")
-        return jsonify({"message": "Success", "content": "content"}), 200  # Returning a success response
+            if content['date']:
+                start_date = content['date']['startDate']
+                end_date = content['date']['endDate']
+                query += f" AND date BETWEEN '{start_date}' AND '{end_date}'"
+                
+            if content['time']:
+                time_list = content['time']
+                time_condition = " OR ".join([f"time = {hour}" for hour in time_list])
+                query += f" AND ({time_condition})"
+            
+            cursor.execute(query)
+            result = cursor.fetchall()
+            return jsonify(result)
 
-    else:
-        print("failed")
-        return jsonify({"message": "Failed"}), 400  # Returning a failure response
+    except DatabaseError as e:
+        error_message = f"Database Error: {e}"
+        print(error_message)
 
 # def validateToken(token:str):
 
