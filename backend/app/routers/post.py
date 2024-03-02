@@ -135,6 +135,7 @@ def create_table():
     except DatabaseError as e:
         error_message = f"Database Error: {e}"
         print(error_message)
+        return jsonify({"message": "failed"}), 400
 
 # def validateToken(token:str):
 
