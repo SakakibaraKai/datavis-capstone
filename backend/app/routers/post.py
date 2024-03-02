@@ -112,9 +112,14 @@ def create_initial_table(content, drop_db, city_name):
 @bp.route('/create', methods = ['POST'])
 def create_table():
     content = request.get_json()
-    query = f"SELECT * FROM {content['database']} WHERE 1"
+
+    database_name = content.get('database')  # 요청에서 데이터베이스 이름 가져오기
+    table_name = content.get('')
+    if not database_name or not table_name:
+        return jsonify({"error": "Database name is required"}), 400  # 데이터베이스 이름이 없으면 오류 반환
     
-    try:
+    query = f"SELECT * FROM {content['database']} WHERE 1"
+    try:    
         with conn.cursor() as cursor:
             cursor.execute(f"USE {content['database']}")
 
