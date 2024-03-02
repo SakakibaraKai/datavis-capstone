@@ -4,7 +4,7 @@ import requests
 import json
 import pymysql
 import bcrypt
-from .sqlsetup import execute_query
+#from .sqlsetup import execute_query
 
 bp = Blueprint('posts', __name__ )
 

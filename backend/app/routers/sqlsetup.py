@@ -1,8 +1,8 @@
 import pymysql
 
 conn = pymysql.connect(
-    host = 'localhost',
-    # host='host.docker.internal',
+    #host = 'localhost',
+    host='host.docker.internal',
     user='root',
     password='admin',
     charset='utf8mb4',
