@@ -115,6 +115,7 @@ def create_table():
 
     database_name = content.get('database')  # 요청에서 데이터베이스 이름 가져오기
     table_name = content.get('')
+    print(":content== ", content)
     if not database_name or not table_name:
         return jsonify({"error": "Database name is required"}), 400  # 데이터베이스 이름이 없으면 오류 반환
     
