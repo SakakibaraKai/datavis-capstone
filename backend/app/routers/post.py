@@ -3,8 +3,8 @@ from typing import Optional
 import requests
 import json
 import pymysql
-#import bcrypt
-#from .sqlsetup import execute_query
+import bcrypt
+from .sqlsetup import execute_query
 
 bp = Blueprint('posts', __name__ )
 
@@ -116,8 +116,14 @@ def create_table():
 
     if(content):
         print("Success")
+        
+
+        return jsonify({"message": "Success", "content": content}), 200  
+        
+
     else:
         print("failed")
+        return jsonify({"message": "Failed"}), 400  # Returning a failure response
 
 # def validateToken(token:str):
 

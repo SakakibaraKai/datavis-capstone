@@ -7,3 +7,4 @@ json2html
 python-jose
 pymysql
 gunicorn
+bcrypt
