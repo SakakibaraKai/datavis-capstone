@@ -10,3 +10,4 @@ gunicorn
 bcrypt
 cryptography
 jupyter
+mysql-connector-python

@@ -1,16 +1,14 @@
-#from app.routers import post, get, delete, put
-from routers import post, get, delete, put
+from app.routers import post, get, delete, put
+#from routers import post, get, delete, put
 from flask import Flask, render_template, session
 from dotenv import load_dotenv, find_dotenv
 from os import environ as env
 from flask_cors import CORS
-from pymongo import MongoClient
 
 app = Flask(__name__)
 app.register_blueprint(get.bp)
 app.register_blueprint(post.bp)
 
-client = MongoClient('mongodb://localhost:27017/')
 
 
 CORS(app, resources={r"/*": {"origins": "*"}})
