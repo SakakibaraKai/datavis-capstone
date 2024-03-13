@@ -23,8 +23,23 @@ export default function DisplayTable() {
             }
         )
         const resBody = await res.json()
-        console.log("== resBody", resBody)
+        console.log("== GET-Body", resBody)
         setFormData(resBody)
+    }
+
+    async function sendPost() {
+        const table = {"table_name": selectedTable}
+        const res = await fetch(
+            "http://localhost:8080/tablelist",
+            {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify(table)
+            }
+            
+        )
+        const resBody = await res.json()
+        console.log("==POST-Body:", resBody)
     }
 
     useEffect(() => {
@@ -34,6 +49,7 @@ export default function DisplayTable() {
 
     function handleTableSelect(tableName) {
         setSelectedTable(tableName);
+        sendPost()
     }
 
     return (
