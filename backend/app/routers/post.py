@@ -4,59 +4,36 @@ import requests
 import json
 import pymysql
 import bcrypt
+from pymysql import err
 #from .sqlsetup import execute_query
+import uuid
+import mysql.connector
+
 
 bp = Blueprint('posts', __name__ )
 
-# Mysql connection
-conn = pymysql.connect(
-    host='host.docker.internal',
-    user='root',
-    password='wjdanr90',
-    charset='utf8mb4',
-    cursorclass=pymysql.cursors.DictCursor
+
+# 연결에 필요한 정보
+rds_host = 'capstone-database.c5ys4ks8sbyz.us-west-2.rds.amazonaws.com'
+rds_port = '3306'
+rds_user = 'admin'  # 사용자명 입력
+rds_password = 'capstone'  # 비밀번호 입력
+rds_database = 'capstone'  # 데이터베이스 이름 입력
+# AWS RDS에 데이터베이스 연결
+conn = mysql.connector.connect(
+    host=rds_host,
+    port=rds_port,
+    user=rds_user,
+    password=rds_password,
+    database=rds_database
 )
 
 @bp.route('/users', methods = ['POST'])
 def create_user(user_id: int):
     return {'id': user_id}
 
-@bp.route('/datafetch', methods = ['POST'])
-def fetch_data():
-    content = request.get_json()
-    if content:
-        print("Successfully POST request was sent from frontend!")
-        create_db(content)
-    else:
-        print("failed to POST request")
-    
-    return {
-        "status": 200,
-        "data": content
-    }
-
-def create_db(content):
-    print("==", content['city']) # corvallis
-    cityName = content['city']
-    cityDB = content['city'] + "DB"
-
-    try: 
-        with conn.cursor() as cursor:
-            # SQL query execute()
-            drop_db = f"DROP DATABASE IF EXISTS {cityDB}"
-            cursor.execute(drop_db)
-            conn.commit()
-            sql = f"CREATE DATABASE {cityDB}"
-            cursor.execute(sql)
-            conn.commit()
-            print(f"Database '{cityDB}' has been dropped and created successfully.")
-            create_initial_table(content, cityDB, cityName)
-
-    except Exception as e:
-        # Error
-        print("==Error:", e)
-
-def create_initial_table(content, drop_db, city_name):
+@bp.route('/createtable', methods =['POST'])
+def create_table(content):
     col1 = "date"
     col2 = "time"
     col3 = "maximum_temperature"
@@ -65,10 +42,11 @@ def create_initial_table(content, drop_db, city_name):
     col6 = "pressure"
     col7 = "humidity"
     col8 = "description"
+    city_name = content['city']
     try:
         with conn.cursor() as cursor:
             # DB selection
-            cursor.execute(f"USE {drop_db}")
+            cursor.execute(f"USE {rds_database}")
             # table query creation
             sql = f"CREATE TABLE IF NOT EXISTS {city_name} ("
             sql += "id INT AUTO_INCREMENT PRIMARY KEY,"
@@ -84,7 +62,7 @@ def create_initial_table(content, drop_db, city_name):
 
             cursor.execute(sql)
 
-                        # JSON 데이터에서 내용 추출 및 쿼리 실행
+            # JSON 데이터에서 내용 추출 및 쿼리 실행
             for data in content['list']:
                 dt_txt = data['dt_txt']
                 date, time = dt_txt.split()
@@ -100,6 +78,7 @@ def create_initial_table(content, drop_db, city_name):
                 insert_sql = f"INSERT INTO {city_name} ({col1}, {col2}, {col3}, {col4}, {col5}, {col6}, {col7}, {col8}) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
                 cursor.execute(insert_sql, (date, time, max_temp, min_temp, pop, pressure, humidity, description))
                 conn.commit()
+
             print(f"Table '{city_name}' has been created successfully.")
 
     except Exception as e:
@@ -108,44 +87,6 @@ def create_initial_table(content, drop_db, city_name):
     finally:
         # close connection
         conn.close()
-
-@bp.route('/create', methods = ['POST'])
-def create_table():
-    content = request.get_json()
-
-    database_name = content.get('database')  # 요청에서 데이터베이스 이름 가져오기
-    table_name = content.get('')
-    print(":content== ", content)
-    if not database_name or not table_name:
-        return jsonify({"error": "Database name is required"}), 400  # 데이터베이스 이름이 없으면 오류 반환
-    
-    query = f"SELECT * FROM {content['database']} WHERE 1"
-    try:    
-        with conn.cursor() as cursor:
-            cursor.execute(f"USE {content['database']}")
-
-            if content['date']:
-                start_date = content['date']['startDate']
-                end_date = content['date']['endDate']
-                query += f" AND date BETWEEN '{start_date}' AND '{end_date}'"
-                
-            if content['time']:
-                time_list = content['time']
-                time_condition = " OR ".join([f"time = {hour}" for hour in time_list])
-                query += f" AND ({time_condition})"
-            
-            cursor.execute(query)
-            result = cursor.fetchall()
-            return jsonify(result)
-
-    except DatabaseError as e:
-        error_message = f"Database Error: {e}"
-        print(error_message)
-        return jsonify({"message": "failed"}), 400
-
-# def validateToken(token:str):
-
-
 
 @bp.route('/register', methods = ['POST'])
 def register():
