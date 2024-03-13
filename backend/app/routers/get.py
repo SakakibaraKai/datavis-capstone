@@ -37,7 +37,6 @@ def show_tables():
     cursor.execute("SHOW TABLES")
     tables = cursor.fetchall()
     table_list = [table[0] for table in tables]
-
     cursor.close()  # 커서 닫기
 
     return {"tables" : table_list}
