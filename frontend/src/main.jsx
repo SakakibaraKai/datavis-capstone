@@ -5,7 +5,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { People, PersonItem, PersonBasic, Root, ErrorPage } from './App'
 import Login from './pages/Login'
 import './index.css'
-
+import DisplayTable from './pages/DisplayTable'
 import FetchSearch from './pages/FetchSearch'
 import CreateTable from './pages/CreateTable'
 
@@ -43,7 +43,13 @@ const router = createBrowserRouter([
                 element: <CreateTable />,
                 children: [
                 ]
-            } 
+            },
+            {   
+                path:"display",
+                element: <DisplayTable />,
+                children: [
+                ]
+            }
         ]
     }
 ])

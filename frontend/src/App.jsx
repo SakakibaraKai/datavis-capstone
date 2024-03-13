@@ -28,6 +28,8 @@ export function Root() {
                     <li><NavLink to="/fetchapi" onClick={() => handleNavLinkClick("fetchapi", 2)} className={activeNav === "FetchApi" ? "active" : ""}>FetchApi</NavLink></li>
                     <li><NavLink to="/login" onClick={() => handleNavLinkClick("login", 4)} className={activeNav === "Login" ? "active" : ""}>Login</NavLink></li>
                     <li><NavLink to="/insert" onClick={() => handleNavLinkClick("CreateTable", 3)} className={activeNav === "CreateTable" ? "active" : ""}>Insert</NavLink></li>
+                    <li><NavLink to="/display" onClick={() => handleNavLinkClick("DisplayTable", 5)} className={activeNav === "DisplayTable" ? "active" : ""}>Display</NavLink></li>
+
                 </ul>
             </nav>
             <main>
