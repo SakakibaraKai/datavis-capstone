@@ -86,8 +86,6 @@ def create_table():
         # Error
         print("Error::", e)
     finally:
-        # close connection
-        conn.close()
         return jsonify({"message": "Table successfully created"})
 
 @bp.route('/register', methods = ['POST'])
