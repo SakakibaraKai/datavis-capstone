@@ -33,7 +33,8 @@ def create_user(user_id: int):
     return {'id': user_id}
 
 @bp.route('/createtable', methods =['POST'])
-def create_table(content):
+def create_table():
+    content = request.get_json()
     col1 = "date"
     col2 = "time"
     col3 = "maximum_temperature"
@@ -87,6 +88,7 @@ def create_table(content):
     finally:
         # close connection
         conn.close()
+        return jsonify({"message": "Table successfully created"})
 
 @bp.route('/register', methods = ['POST'])
 def register():
@@ -113,3 +115,18 @@ def register():
         return(user)
             
     return {"error" : "Missing one or more fields!"}
+
+
+@bp.route('/checktable', methods = ['GET'])
+def check_table():
+    cursor = conn.cursor()
+    cursor.execute("SHOW TABLES")
+    tables = cursor.fetchall()
+    print("Tables in the database:")
+    for table in tables:
+        print(table[0])
+
+    cursor.close()  # 커서 닫기
+
+    return {"Success" : "Table was created!"}
+
