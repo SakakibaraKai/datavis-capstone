@@ -2,7 +2,6 @@ import React from 'react';
 import { NavLink  } from 'react-router-dom';
 
 const WeatherCard = ({weatherData}) => {
-    console.log("==weather",weatherData)
     return (
         <div className="weather-card">
             <li key={weatherData.dt_txt}>

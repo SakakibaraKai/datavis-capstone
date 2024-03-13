@@ -44,10 +44,10 @@ export default function Search() {
 
     // Post to BackEnd port 8080:
     async function sendPost(responsebody, city) {
-        console.log("==city", city)
         responsebody.city = city // add 'city' into responsebody object
+        console.log("==responsebody", JSON.stringify(responsebody)) // responsebody 출력
         const res = await fetch(
-            "http://localhost:8080/datafetch",
+            "http://localhost:8080/createtable",
             {
                 method: "POST",
                 headers: {"Content-Type": "application/json"},
