@@ -29,6 +29,7 @@ export default function DisplayTable() {
 
     useEffect(() => {
         sendGet()
+        console.log("formData", formData)
     }, [])
 
     function handleTableSelect(tableName) {
@@ -37,14 +38,12 @@ export default function DisplayTable() {
 
     return (
         <div>
-            <div>
+            <h2>Selected Table: {selectedTable}</h2>
                 {formData.tables && formData.tables.map((tableName, index) => (
                     <button key={index} onClick={() => handleTableSelect(tableName)}>
                         {tableName}
                     </button>
                 ))}
-            </div>
-            <h2>Selected Table: {selectedTable}</h2>
         </div>
     );
 }
