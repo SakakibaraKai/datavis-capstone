@@ -9,3 +9,4 @@ pymysql
 gunicorn
 bcrypt
 cryptography
+jupyter
