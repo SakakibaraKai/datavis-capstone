@@ -1,6 +1,6 @@
-FROM node
+FROM node:18-alpine as BUILD_IMAGE
 
-WORKDIR /app
+WORKDIR /app/react-app
 
 COPY package.json .
 
