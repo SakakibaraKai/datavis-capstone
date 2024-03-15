@@ -1,8 +1,8 @@
 import pymysql
 
 conn = pymysql.connect(
-    #host = 'localhost',
-    host='host.docker.internal',
+    host = 'localhost',
+    #host='host.docker.internal',
     user='root',
     password='admin',
     charset='utf8mb4',
@@ -13,7 +13,6 @@ def execute_query(query, params=None):
     with conn.cursor() as cursor:
         try:
             cursor.execute(query, params)
-
             if query.strip().upper().startswith('INSERT') or query.strip().upper().startswith('UPDATE') or query.strip().upper().startswith('DELETE'):
                 conn.commit()
                 return False, "successfull query"
