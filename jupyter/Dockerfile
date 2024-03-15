@@ -1,19 +1,19 @@
-FROM jupyter/datascience-notebook
+FROM jupyter/scipy-notebook:latest
 
-# 빌드 종속성 설치 (Ubuntu/Debian 예시)
-RUN apt-get update && apt-get install -y --no-cache gnupg2
-RUN echo "deb http://deb.debian.org/debian buster-backports main" | tee -a /etc/apt/sources.list.d/backports.list
-RUN apt-get update && apt-get install -y --no-cache build-essential python3-dev
+# 추가 라이브러리 설치 (선택사항)
+RUN pip install pandas numpy matplotlib seaborn scikit-learn Flask flask-cors requests pymysql CORS
 
-# requirements.txt 파일에서 추가 Python 패키지 설치
-COPY requirements.txt /tmp/requirements.txt
-RUN pip install --no-cache-dir -r /tmp/requirements.txt
+# 사용자 코드 및 폴더 구조 복사
+COPY ./code /home/jovyan/work
 
-# Jupyter Notebook 서버용 포트 8888 개방
+# 사용자 코드 및 폴더 구조의 권한 변경
+USER root
+RUN chmod -R 777 /home/jovyan/work
+USER jovyan
+
+# 포트 열기
 EXPOSE 8888
+EXPOSE 8000
 
-# drawdata.ipynb 파일을 컨테이너에 복사
-COPY drawdata.ipynb /home/jovyan/
-
-# nbconvert를 사용하여 노트북을 HTML로 변환하는 명령 설정
-CMD ["jupyter", "nbconvert", "--to", "html", "/home/jovyan/drawdata.ipynb"]
+#CMD ["jupyter", "notebook", "--ip=0.0.0.0", "--port=8888", "--allow-root", "&", "python", "/home/jovyan/work/app.py"]
+# Flask 애플리케이션 실행 (선택사항)
