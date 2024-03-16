@@ -5,13 +5,13 @@ import json
 import pymysql
 import bcrypt
 from pymysql import err
-#from .sqlsetup import execute_query
+from .sqlsetup import execute_query
 import uuid
 import mysql.connector
+from .authentication import createToken, validateToken, validatePassword, hashPassword
 
 
 bp = Blueprint('posts', __name__ )
-
 
 # 연결에 필요한 정보
 rds_host = 'capstone-database.c5ys4ks8sbyz.us-west-2.rds.amazonaws.com'
@@ -88,14 +88,27 @@ def create_table():
     finally:
         return jsonify({"message": "Table successfully created"})
 
+@bp.route('/login', methods = ['POST'])
+def login():
+    user = json.loads(request.data)
+    if "password" in user and "email" in user:
+        query_data = execute_query(
+            "SELECT name, password, id FROM user WHERE email = %s"
+        , (user['email']))
+        #0 - Name. 1- Password
+        err, message, status = validatePassword(user['password'].encode('utf-8'), query_data[0][1].encode('utf-8'), query_data[0][2], query_data[0][0])
+        if err:
+            return {"error": message}, status
+        return{"token": message}, status
+        
+    return {"error" : "Missing one or more fields!"}, 400
+
 @bp.route('/register', methods = ['POST'])
 def register():
     user = json.loads(request.data)
     if "name" in user and "password" in user and "email" in user:
         #encrypt password for storage
-        bytes = user["password"].encode('utf-8') 
-        salt = bcrypt.gensalt()
-        hashed_password = bcrypt.hashpw(bytes, salt) 
+        hashed_password = hashPassword(user["password"].encode('utf-8'))
         
         #delete password so we can send the user back
         if 'password' in user:
@@ -108,11 +121,11 @@ def register():
 
         #handle errors
         if error:
-            return {"error" : result}
+            return {"error" : result}, 400
         
         return(user)
             
-    return {"error" : "Missing one or more fields!"}
+    return {"error" : "Missing one or more fields!"}, 400
 
 
 @bp.route('/checktable', methods = ['GET'])
