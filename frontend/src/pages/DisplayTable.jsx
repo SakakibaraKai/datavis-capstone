@@ -29,8 +29,9 @@ export default function DisplayTable() {
 
     async function sendPost() {
         const table = {"table_name": selectedTable}
+        console.log("== table", table)
         const res = await fetch(
-            "http://localhost:8080/tablelist",
+            "http://localhost:8080/get-table",
             {
                 method: "POST",
                 headers: {"Content-Type": "application/json"},
