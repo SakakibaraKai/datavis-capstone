@@ -5,17 +5,18 @@ import json
 import pymysql
 import bcrypt
 from pymysql import err
-from .sqlsetup import execute_query
+#from .sqlsetup import execute_query
 import uuid
 import mysql.connector
-from .authentication import createToken, validateToken, validatePassword, hashPassword
-
+#from .authentication import createToken, validateToken, validatePassword, hashPassword
 
 bp = Blueprint('posts', __name__ )
 
+jupyter_note_url = "http://127.0.0.1:8000/drawtable"
+
 # 연결에 필요한 정보
 rds_host = 'capstone-database.c5ys4ks8sbyz.us-west-2.rds.amazonaws.com'
-rds_port = '3306'
+rds_port = 3306
 rds_user = 'admin'  # 사용자명 입력
 rds_password = 'capstone'  # 비밀번호 입력
 rds_database = 'capstone'  # 데이터베이스 이름 입력
@@ -141,3 +142,14 @@ def check_table():
 
     return {"Success" : "Table was created!"}
 
+@bp.route('/get-table', methods=['POST'])
+def get_table():
+    if request.method == 'POST':
+        content = request.get_json()
+        print("content type: ", type(jsonify(content)))
+        table_name = content['table_name']
+        print("table_name", type(table_name))
+        response = requests.post(jupyter_note_url, json=content)
+        print(response)
+        
+        return response.content

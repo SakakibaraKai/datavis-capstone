@@ -14,7 +14,7 @@ jupyter_note_url = "http://127.0.0.1:8000/drawtable"
  
 # 연결에 필요한 정보
 rds_host = 'capstone-database.c5ys4ks8sbyz.us-west-2.rds.amazonaws.com'
-rds_port = '3306'
+rds_port = 3306
 rds_user = 'admin'  # 사용자명 입력
 rds_password = 'capstone'  # 비밀번호 입력
 rds_database = 'capstone'  # 데이터베이스 이름 입력
@@ -67,5 +67,4 @@ def show_tables():
             return jsonify({"message": f"Request failed with status code {response.status_code}"})
     else:
         return jsonify({"message": "GET method not supported"})
-    
     
