@@ -9,9 +9,8 @@ app = Flask(__name__)
 app.register_blueprint(get.bp)
 app.register_blueprint(post.bp)
 
-
-
 CORS(app, resources={r"/*": {"origins": "*"}})
+#CORS(app)
 
 ENV_FILE = find_dotenv("APP_SECRET_KEY")
 if ENV_FILE:

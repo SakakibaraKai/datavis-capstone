@@ -8,4 +8,6 @@ RUN pip install -r /server/requirements.txt
 
 COPY ./app /server/app
 
-CMD ["python", "-m", "flask", "run", "--host=0.0.0.0", "--port=8080"]
+EXPOSE 8080
+
+CMD ["gunicorn", "app.server:app", "-b", "0.0.0.0:8080"]

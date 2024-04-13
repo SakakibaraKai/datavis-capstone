@@ -9,10 +9,14 @@ from pymysql import err
 import uuid
 import mysql.connector
 #from .authentication import createToken, validateToken, validatePassword, hashPassword
+session = requests.session()
 
 bp = Blueprint('posts', __name__ )
 
-jupyter_note_url = "http://127.0.0.1:8000/drawtable"
+
+jupyter_note_host = "host.docker.internal"
+jupyter_note_port = 8000
+drawtable_url = f"http://{jupyter_note_host}:{jupyter_note_port}/drawtable"
 
 # 연결에 필요한 정보
 rds_host = 'capstone-database.c5ys4ks8sbyz.us-west-2.rds.amazonaws.com'
@@ -146,10 +150,10 @@ def check_table():
 def get_table():
     if request.method == 'POST':
         content = request.get_json()
-        print("content type: ", type(jsonify(content)))
+        print("content type: ", type(content))
         table_name = content['table_name']
         print("table_name", type(table_name))
-        response = requests.post(jupyter_note_url, json=content)
+        response = requests.post(drawtable_url, json=content, verify = False)
         print(response)
         
         return response.content
