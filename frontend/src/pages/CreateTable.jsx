@@ -4,371 +4,129 @@ import { useMutation } from '@tanstack/react-query'
 import Spinner from '../components/Spinner.jsx'
 import ErrorContainer from '../components/ErrorContainer.jsx'
 import WeatherCard from '../components/WeatherCard.jsx'
-/** @jsxImportSource @emotion/react */
-import { css } from '@emotion/react';
+import Slider from 'react-slider';
+//      /** @jsxImportSource @emotion/react */
+import styled from '@emotion/styled'
+import { css } from '@emotion/react'
+import DataAnalysis from '../components/DataAnalysis.jsx'
 
-const labelStyle = css`
-  /* label에 대한 스타일을 지정할 수 있습니다 */
-  /* 예를 들어, 여기에는 label의 텍스트 스타일을 지정합니다 */
-  font-weight: bold;
-  display:block;
-  color: blue;
+
+const Platform = styled.div`
+    width: 1000px;
+    height: 400px;
+    display: flex;
+    align-items: center; /* 수직 가운데 정렬 */
+    flex-direction: column; /* 세로 방향으로 아이템을 배치 */
+`
+const InputStyle = styled.input`
+    margin-bottom: 10px;
+    width: 40vw;
+    height: 3vh;
+    border-radius: 20px;
+    text-align: center;
+`;
+
+const SearchCity = styled.div`
+  display: flex;
+  margin: 50px;
+  // width와 height 로 크기 지정
+  width: 150px;
+  height: 50px;
+
+`;
+
+const CityBox = styled.div`
+  display: flex;
+  flex-direction: column;
+`
+const ButtonWrapper = styled.div`
+  align-items: center;
+`;
+
+const Button = styled.button`
+    height: 80px;
+    background-color: #2b7bbe;
+    color: #fff;
+    border: 2px solid #2b7bbe;
+    border-radius: 3px;
+    font-size: 18px;
+    font-weight: 300;
+    padding: 5px 20px;
+    margin: 5px;
+    cursor: pointer;
+
+    &:hover {
+        background-color: #71b5ed;
+    }
 `;
 
 
 export default function CreateTable() {
+    // cityName1 AND cityName2
+    const [ cityName1, setCityName1 ] = useState("")
+    const [ cityName2, setCityName2 ] = useState("")
     const [ formData, setFormData ] = useState({})
-    // Table and DB
-    const [ TableName, setTableName ] = useState("")
-    const [ DataBaseName, setDataBaseName ] = useState("")
-    // DATE
-    const [ Date, setDate ] = useState(false);
-    const [ startDate, setStartDate] = useState('')
-    const [ endDate, setEndDate] = useState('')
-
-    const HandleDate = () => {
-        setStartDate('')
-        setEndDate('')
-    }
-
-
-    // Time
-    const [ showTimeSelector, setShowTimeSelector ] = useState(false);
-    const [ selectedTimes, setSelectedTimes ] = useState([])
-
-    // max Temp range
-    const [ isMaxTempSelected, setIsMaxTempSelected ] = useState(false);
-    const [ maxlowTem, setMaxLowTemp ] = useState('')
-    const [ maxhighTem, setMaxHighTemp ] = useState('')
-    // Min Temp range
-    const [ isMinTempSelected, setIsMinTempSelected ] = useState(false);
-    const [ minlowTem, setMinLowTemp ] = useState('')
-    const [ minhighTem, setMinHighTemp ] = useState('')
-
-    // Pop
-    const [ isPopSelected, setIsPopSelected ] = useState(false)
-    const [ lowPop, setLowPop ] = useState('')
-    const [ highPop, setHighPop] = useState('')
+    const [ submitButton, setSubmitButton ] = useState(false)
+    const [ visualization, setVisualization ] = useState({})
 
     const handleSubmit = (e) => {
-        if (!DataBaseName) {
-            console.error('Please Provide a DataBaseName');
+
+
+        // cityName1 이 빈 배열 || (compareCity 가 참이고 동시에 cityName2가 빈 배열)
+        if (!cityName1 || !cityName2) {
+            console.error('Please Provide city name');
             return
         }
+
+        // cityName1 추가
         setFormData({
-            ...formData,
-            database: DataBaseName
+            city_name1: cityName1,
+            city_name2: cityName2
         })
 
-        if (!TableName) {
-            console.error('Please Provide a DataBaseName');
-            return
-        } 
-        setFormData({
-            ...formData,
-            tablename: TableName
-        })
-        // if Date exist
-        if (Date) {
-            setFormData({
-                ...formData,
-                date: {
-                    startDate: startDate,
-                    endDate: endDate
-                }
-            })
-        }
-        
-        // if Time exist
-        if (showTimeSelector) {
-            setFormData({
-                ...formData,
-                time: selectedTimes
-            })
-        }
-        // max Temp exist
-        if  (isMaxTempSelected) {
-            setFormData({
-                ...formData,
-                max_temp: {
-                    max_high_temp: maxlowTem ,
-                    max_low_temp: maxhighTem
-                }
-            })
-        }
-        // min Temp exist
-        if (isMinTempSelected) {
-            setFormData({
-                ...formData,
-                min_temp: {
-                    min_high_temp: minlowTem,
-                    min_low_temp: minhighTem
-                }
-            })
-        }
-        // Pop exist
-        if (isPopSelected) {
-            setFormData({
-                ...formData,
-                pop: {
-                    high_pop: highPop,
-                    low_pop: lowPop
-                }
-            })
-        }
-
-        console.log("==dataForm==: ", formData)
-        // send Post to 8080:create
         fetch('http://localhost:8080/create', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(formData)
+            
         })
         .then(response => {
             if(!response.ok) {
                 throw new Error('BackEnd Server is closed')
             }
             console.log("Successfully Request sent")
+            return response.json();
+        })
+        .then(data => {
+            setVisualization(data)
         })
         .catch(error => {
             console.error("fetch request error", error)
         })
+
+        setSubmitButton(prev => !prev)
     }
-    // handle Date
-    const handleDate = (e) => {
-        //setDate(!Date);
-        setDate(e.target.checked);
-    }
-
-    // handle time
-    const handleCheckboxChange = (e) => {
-        const isChecked = e.target.checked;
-        setShowTimeSelector(isChecked);
-    };
-
-    const handleTimeCheckboxChange = (e) => {
-        const selectedTime = parseInt(e.target.value, 10);
-        const isChecked = e.target.checked;
-
-        if (isChecked) {
-            setSelectedTimes([...selectedTimes, selectedTime]);
-        } else {
-            setSelectedTimes(selectedTimes.filter(time => time !== selectedTime));
-        }
-    };
-
-    // handle max temp
-    const handleSelectedMaxTemp=(e) => {
-        setIsMaxTempSelected(e.target.checked)
-    }
-    const handleMinTempChange = (e) => {
-        if (/^\d*\.?\d{0,1}$/.test(e.target.value) || e.target.value === '') {
-            setMaxLowTemp(e.target.value);
-        }
-    };
-    const handleMaxTempChange = (e) => {
-        if (/^\d*\.?\d{0,1}$/.test(e.target.value) || e.target.value === '') {
-            setMaxHighTemp(e.target.value);
-        }
-    };
-
-    // handle min temp
-    const handleSelectedMinTemp=(e) => {
-        setIsMinTempSelected(e.target.checked)
-    }
-    const handleLowChange = (e) => {
-        if (/^\d*\.?\d{0,1}$/.test(e.target.value) || e.target.value === '') {
-            setMinLowTemp(e.target.value);
-        }
-    };
-    const handleHighChange = (e) => {
-        if (/^\d*\.?\d{0,1}$/.test(e.target.value) || e.target.value === '') {
-            setMinHighTemp(e.target.value);
-        }
-    };
-
-    // handle pop
-    const handleSelectedPop = (e) => {
-        setIsPopSelected(!isPopSelected)
-    }
-    const handleLowPopChange = (e) => {
-        if (/^\d*\.?\d{0,2}$/.test(e.target.value) || e.target.value === '') {
-            setLowPop(e.target.value);
-        }
-    };
-    const handleHighPopChange = (e) => {
-        if (/^\d*\.?\d{0,2}$/.test(e.target.value) || e.target.value === '') {
-            setHighPop(e.target.value);
-        }
-    };
-
-
-
 
     return (
-    <>
-        <div>
-            <div>
-                {/* 이벤트의 기본 동작이 발생하지 않도록 하기 위해 이벤트 객체에서 호출하는 method */}
-                <form className = "search-form" onSubmit={(e => {
-                    e.preventDefault()
-                    handleSubmit
-                })}>
-                   
-                    {/* 테이블 이름 & 데이터베이스 이름  */}
-                    
-                    <input value={DataBaseName} placeholder = "Put db name" onChange = {e => {setDataBaseName(e.target.value)}} />
-                    <input value={TableName} placeholder = "Put table name" onChange={e => {setTableName(e.target.value)}} />
-
-                    {/* Date */}
-                    <label css ={labelStyle}>
-                        <input type="checkbox" onChange={handleDate} />
-                        <span>date</span>
-                        {Date && (
-                            <div>
-                                <label>
-                                    Start Date:
-                                    <input type="date"
-                                        value = {startDate}
-                                        onChange={(e)=>setStartDate(e.target.value)}
-                                    />
-                                </label>
-                                <label>
-                                    End Date:
-                                    <input type="date"
-                                        value = {endDate}
-                                        onChange={(e)=> setEndDate(e.target.value)}
-                                    
-                                    />
-                                </label>
-                            </div>
-                        )}
-                    </label>
-
-
-                    {/* 시간 체크박스 */}
-                    <label css ={labelStyle}>
-                        <input type="checkbox" onChange={handleCheckboxChange} />
-                        <span>time</span>
-                    </label>
-                    {/* 시간 선택 체크박스 */}
-                    {showTimeSelector && (
-                        <div>
-                            {[0, 3, 6, 9, 12, 15, 18, 21].map(time => (
-                                <label key={time}>
-                                    <input
-                                        type="checkbox"
-                                        value={time}
-                                        checked={selectedTimes.includes(time)}
-                                        onChange={handleTimeCheckboxChange}
-                                    />
-                                    {`${time.toString().padStart(2, '0')}:00`}
-                                </label>
-                            ))}
-                        </div>
-                    )}
-
-                    {/* max Temp */}
-                    <label css ={labelStyle}>
-                        <input 
-                            type="checkbox" 
-                            onClick={handleSelectedMaxTemp} />
-                            <span>max temp</span>
-                            {isMaxTempSelected && (
-                            <div>
-                                <label>
-                                    Min Temperature: (℉)
-                                    <input
-                                        type="number"
-                                        stemp ="0.1"
-                                        value={maxlowTem}
-                                        onChange={handleMinTempChange}
-                                    />
-                                </label>
-                                <br />
-                                <label>
-                                    Max Temperature: (℉)
-                                    <input
-                                        type="number"
-                                        step = "0.1"
-                                        value={maxhighTem}
-                                        onChange={handleMaxTempChange}
-
-                                    />
-                                </label>
-                            </div>
-                        )}
-                    </label>
-
-
-                    {/* min Temp */}
-                     <label css ={labelStyle}>
-                        <input 
-                            type="checkbox" 
-                            onClick={handleSelectedMinTemp} />
-                            <span>min temp</span>
-                            {isMinTempSelected && (
-                            <div>
-                                <label>
-                                    Min Temperature: (℉)
-                                    <input
-                                        type="number"
-                                        stemp ="0.1"
-                                        value={maxlowTem}
-                                        onChange={handleLowChange}
-                                    />
-                                </label>
-                                <br />
-                                <label>
-                                    Max Temperature: (℉)
-                                    <input
-                                        type="number"
-                                        step = "0.1"
-                                        value={maxhighTem}
-                                        onChange={handleHighChange}
-
-                                    />
-                                </label>
-                            </div>
-                        )}
-                    </label>
-                    
-                    {/* Pop */}
-                    <label css ={labelStyle}>
-                        <input type="checkbox" onChange={handleSelectedPop} />
-                        <span>POP</span>
-                        {isPopSelected && (
-                        <div>
-                            <label>
-                                Min Pop: (%)
-                                <input
-                                    type="number"
-                                    stemp ="0.1"
-                                    value={lowPop}
-                                    onChange={handleLowPopChange}
-                                />
-                            </label>
-                            <br />
-                            <label>
-                                Max Pop (%)
-                                <input
-                                    type="number"
-                                    step = "0.1"
-                                    value={highPop}
-                                    onChange={handleHighPopChange}
-
-                                />
-                            </label>
-                        </div>
-                        )}
-                    </label>
-                    <button type = "submit" onClick={handleSubmit}>Create</button>
-                </form>
-            </div>
-        </div>    
-    </>
+        <Platform>
+            {/* 이벤트의 기본 동작이 발생하지 않도록 하기 위해 이벤트 객체에서 호출하는 method */}
+            <form className = "search-form" onSubmit={(e => {
+                e.preventDefault()
+                handleSubmit
+            })}>
+                <SearchCity>       
+                    <CityBox>
+                        <InputStyle value={cityName1} placeholder = "City Name 1" onChange = {e => {setCityName1(e.target.value)}} />
+                        <InputStyle value={cityName2} placeholder = "City Name 2" onChange = {e => {setCityName2(e.target.value)}} />
+                    </CityBox>
+                    <Button type = "submit" onClick={handleSubmit}> Compare</Button>
+                </SearchCity>
+            </form>
+            {submitButton && <DataAnalysis />}
+            {console.log("==visualization: ", visualization)}
+        </Platform> 
     )
 
 }
