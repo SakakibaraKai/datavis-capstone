@@ -14,8 +14,11 @@ jobs:
       contents: read
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Build the Docker image
-      run: |
-        git checkout feature-frontend
-        docker build -t frontend .
+    - name: Checkout code
+      uses: actions/checkout@v3
+    
+    - name: Switch to feature-frontend branch
+      run: git checkout eature-frontend
+
+    - name: builder the dcker image
+      run: docker build -t frontend .
