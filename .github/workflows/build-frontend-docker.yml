@@ -18,7 +18,7 @@ jobs:
       uses: actions/checkout@v3
     
     - name: Switch to feature-frontend branch
-      run: git checkout eature-frontend
+      run: git checkout feature-frontend
 
     - name: builder the dcker image
       run: docker build -t frontend .
