@@ -1,0 +1,25 @@
+name: Docker Back
+
+on:
+  push:
+    branches:
+      - main
+      
+jobs:
+  
+  build_frontend:
+    runs-on: ubuntu-latest
+    permissions: 
+      packages: write
+      contents: read
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      with:
+        ref: feature-backend
+
+    - name: builder the dcker image
+      run: |
+        cd backend
+        docker build -t backend .
