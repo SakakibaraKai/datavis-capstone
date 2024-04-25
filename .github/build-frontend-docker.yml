@@ -1,0 +1,21 @@
+name: Docker Front
+
+on:
+  push:
+    branches:
+      - feature-frontend
+      
+jobs:
+  
+  build_frontend:
+    runs-on: ubuntu-latest
+    permission: 
+      packages: write
+      contents: read
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build the Docker image
+      run: |
+      cd feature-frontend
+      docker build -t frontend .
