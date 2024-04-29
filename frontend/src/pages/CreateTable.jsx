@@ -70,8 +70,6 @@ export default function CreateTable() {
     const [ visualization, setVisualization ] = useState({})
 
     const handleSubmit = (e) => {
-
-
         // cityName1 이 빈 배열 || (compareCity 가 참이고 동시에 cityName2가 빈 배열)
         if (!cityName1 || !cityName2) {
             console.error('Please Provide city name');
@@ -101,6 +99,7 @@ export default function CreateTable() {
         })
         .then(data => {
             setVisualization(data)
+            console.log("==vis: ", visualization)
         })
         .catch(error => {
             console.error("fetch request error", error)
