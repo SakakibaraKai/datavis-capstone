@@ -42,9 +42,8 @@ const Container = styled.div`
     height: 100%;
 `;
 
-export default function DataAnalysis() {
+export default function DataAnalysis({ humidity_image, temp_max_image, pressure_image }) {
     const [activeNavItem, setActiveNavItem] = useState(""); // 선택된 네비게이션 아이템 상태
-
     // 네비게이션 항목 클릭 이벤트 핸들러
     const handleNavItemClick = (city) => {
       setActiveNavItem(city); // 선택된 네비게이션 아이템 업데이트
@@ -59,30 +58,31 @@ export default function DataAnalysis() {
             onClick={() => handleNavItemClick("Humidity")}
             >
               Humidity
+              {console.log(humidity_image)}
             </NavButton>
             <NavButton
               active={activeNavItem === "Temperature"}
               onClick={() => handleNavItemClick("Temperature")}
             >
-              Temperature
+              Temperture
             </NavButton>
             <NavButton
               active={activeNavItem === "WindSpeed"}
               onClick={() => handleNavItemClick("WindSpeed")}
             >
-              Wind Speed
+              Pressure
           </NavButton>
           {activeNavItem && (
                   <Container style={{ border: "2px solid #71b5ed", padding: "10px" }}>
                   {/* 내용 */}
                   {activeNavItem === "Humidity" ? (
-                    <p>Humidity Graph</p>
+                    <img src={humidity_image} alt="Humidity Image" />
                   ) : activeNavItem === "Temperature" ? (
-                    <p>Temperature Graph</p>
+                    <img src={temp_max_image} alt="Max Temp Image" />
                   ) : activeNavItem === "Precipitation" ? (
-                    <p>Precipitation Graph</p>
+                    <img src={temp_max_image} alt="Max Temp Image" />
                   ) : activeNavItem === "WindSpeed" ? (
-                    <p>Wind Speed Graph</p>
+                    <img src={pressure_image} alt="Pressure Image" />
                   ) : null}
                 </Container>
               )}

@@ -10,7 +10,6 @@ import styled from '@emotion/styled'
 import { css } from '@emotion/react'
 import DataAnalysis from '../components/DataAnalysis.jsx'
 
-
 const Platform = styled.div`
     width: 1000px;
     height: 400px;
@@ -32,7 +31,6 @@ const SearchCity = styled.div`
   // width와 height 로 크기 지정
   width: 150px;
   height: 50px;
-
 `;
 
 const CityBox = styled.div`
@@ -60,6 +58,15 @@ const Button = styled.button`
     }
 `;
 
+function decodeBase64Image(base64String) {
+    const byteCharacters = atob(base64String);
+    const byteNumbers = new Array(byteCharacters.length);
+    for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+    }
+    const byteArray = new Uint8Array(byteNumbers);
+    return new Blob([byteArray]);
+}
 
 export default function CreateTable() {
     // cityName1 AND cityName2
@@ -68,8 +75,17 @@ export default function CreateTable() {
     const [ formData, setFormData ] = useState({})
     const [ submitButton, setSubmitButton ] = useState(false)
     const [ visualization, setVisualization ] = useState({})
+    const [ loading, setLoading ] = useState(false);
+    const [ error, setError ] = useState(null);
+    const [ isfetched, setIsfetched ] = useState(false);
+    const [ humidity_img, setHumidityImage ] = useState(null)
+    const [ temp_max_img, setTempMaxImage ] = useState("")    
+    const [ pressure_img, setPressureImage ] = useState("")
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
+        setLoading(true)
+        setIsfetched(false)
+        const controller = new AbortController();
         // cityName1 이 빈 배열 || (compareCity 가 참이고 동시에 cityName2가 빈 배열)
         if (!cityName1 || !cityName2) {
             console.error('Please Provide city name');
@@ -82,30 +98,39 @@ export default function CreateTable() {
             city_name2: cityName2
         })
 
-        fetch('http://localhost:8080/create', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(formData)
-            
-        })
-        .then(response => {
-            if(!response.ok) {
-                throw new Error('BackEnd Server is closed')
-            }
-            console.log("Successfully Request sent")
-            return response.json();
-        })
-        .then(data => {
+        try {
+            const response = await fetch('http://localhost:8080/create', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData),
+                signal: controller.signal
+            });
+            const data = await response.json();
             setVisualization(data)
-            console.log("==vis: ", visualization)
-        })
-        .catch(error => {
-            console.error("fetch request error", error)
-        })
+            if (visualization) {
+                const base64String = visualization['humidity_image']
+                // 이미지 생성
+                console.log(base64String)
+                const imageData = decodeBase64Image(base64String);
+                
+                const imageUrl = URL.createObjectURL(new Blob([imageData]));
+                setHumidityImage(imageUrl);
 
-        setSubmitButton(prev => !prev)
+                const temp_max_imageUrl = `data:image/png;base64,${visualization['max_temp_image']}`;
+                setTempMaxImage(temp_max_imageUrl);
+                const pressure_imageUrl = `data:image/png;base64,${visualization['pressure_image']}`;
+                setTempMaxImage(pressure_imageUrl);
+            }
+            setLoading(false)
+            setIsfetched(true)
+
+        } catch(error) {
+            console.error("fetch request error", error) 
+        } finally {
+            setSubmitButton(prev => !prev)
+        }
     }
 
     return (
@@ -123,9 +148,14 @@ export default function CreateTable() {
                     <Button type = "submit" onClick={handleSubmit}> Compare</Button>
                 </SearchCity>
             </form>
-            {submitButton && <DataAnalysis />}
+            <div>
+                {error && <ErrorContainer />}
+                {loading && <Spinner />}
+            </div>
+            {console.log("==humidity_image: ", humidity_img)}
+            {humidity_img && <img src={humidity_img} alt="Humidity" />}
+            {isfetched && <DataAnalysis humidity_image = {humidity_img} temp_max_image = {temp_max_img} pressure_image = {pressure_img}/>}
             {console.log("==visualization: ", visualization)}
         </Platform> 
     )
-
 }
