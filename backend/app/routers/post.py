@@ -247,15 +247,15 @@ def create_graphs():
         with conn.cursor() as cursor:
             cursor.execute(f"USE {rds_database}")
             # 각 이미지의 ID를 사용하여 쿼리 실행하여 이미지 데이터 가져오기
-            cursor.execute(f"SELECT image_data FROM image WHERE id = %s", (humidity_id,))
+            cursor.execute(f"SELECT image_data FROM images WHERE id = %s", (humidity_id,))
             humidity_image_data = cursor.fetchone()
             #print(humidity_image_data)
             
-            cursor.execute(f"SELECT image_data FROM image WHERE id = %s", (max_temp_id,))
+            cursor.execute(f"SELECT image_data FROM images WHERE id = %s", (max_temp_id,))
             max_temp_image_data = cursor.fetchone()
             #print(max_temp_image_data)
 
-            cursor.execute(f"SELECT image_data FROM image WHERE id = %s", (pressure_id,))
+            cursor.execute(f"SELECT image_data FROM images WHERE id = %s", (pressure_id,))
             pressure_image_data = cursor.fetchone()
             #print(pressure_image_data)
 
