@@ -259,16 +259,12 @@ def create_graphs():
             pressure_image_data = cursor.fetchone()
             #print(pressure_image_data)
 
-        # Base64로 이미지 데이터 인코딩
-        humidity_image_base64 = base64.b64encode(humidity_image_data[0]).decode('utf-8') if humidity_image_data else None
-        max_temp_image_base64 = base64.b64encode(max_temp_image_data[0]).decode('utf-8') if max_temp_image_data else None
-        pressure_image_base64 = base64.b64encode(pressure_image_data[0]).decode('utf-8') if pressure_image_data else None
-
         res = {
-            "humidity_image": humidity_image_base64,
-            "max_temp_image": max_temp_image_base64,
-            "pressure_image": pressure_image_base64
+            "humidity_image": humidity_image_data[0] if humidity_image_data else None,
+            "max_temp_image": max_temp_image_data[0] if max_temp_image_data else None,
+            "pressure_image": pressure_image_data[0] if pressure_image_data else None
         }
+
         return jsonify(res)
         
     if request.method == 'GET':
