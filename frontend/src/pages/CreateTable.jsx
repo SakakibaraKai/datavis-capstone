@@ -9,10 +9,11 @@ import styled from '@emotion/styled'
 import { css } from '@emotion/react'
 import DataAnalysis from '../components/DataAnalysis.jsx'
 import GoogleMap from '../components/GoogleMap.jsx'
-
+import res from '../data/response.json';
 // Redux
 import { useDispatch, useSelector } from 'react-redux'
-import { updateImages, selectImages } from '../redux/imagesSlice'
+import { updateImages, selectImages } from '../redux/imagesSlice.js'
+import { updateCities, selectCities } from '../redux/citiesSlice.js'
 
 const Platform = styled.div`
     width: 100%;    // 나중에 800px;
@@ -140,21 +141,27 @@ export default function CreateTable() {
     const handleUpdate = async (e) => {
         const controller = new AbortController();
         try {
-            const response = await fetch('http://localhost:8080/update-table', {
+            /*
+            //fetch('http://localhost:8080/update-table'
+            const response = await fetch('../data/response.json', {
                 method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
                 signal: controller.signal
-        })
-        const res = await response.json();
-
-
+            })
+            */
+                       
+            //console.log("== response: ", response['cities_info'])
+            //const res = await response.json();
+            console.log("==res: ", res)
+            console.log("res[0]:", res['cities_info'][0])
+            for(let i = 0; i < res['cities_info'].length; i++) {
+                console.log("==city name: ", res['cities_info'][i]['city_name'])
+                dispatch(updateCities(res['cities_info'][i]))
+            }
         }catch(error) {
-            console.error("Update error", error) 
+            console.error("Update error", error);
             
         }finally {
-        
+            
         }
 
 
