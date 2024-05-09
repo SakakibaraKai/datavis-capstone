@@ -2,6 +2,9 @@ import React from 'react';
 import { useState, useEffect, useContext } from 'react';
 import { Link, NavLink, Outlet, useParams, useRouteError, useLocation } from 'react-router-dom';
 import PersonData from './data/people.json'; // bring Data
+import { css } from '@emotion/react';
+
+
 
 export function Root() {
     const [activeNav, setActiveNav] = useState(null); 
@@ -20,32 +23,20 @@ export function Root() {
     }
 
     return (
-        <>
-            <nav>
+        <div style={{ display: 'flex', height:'100%'}}>
+            <nav style={{ flex: 'none'}}>
                 <ul>
-                    <li><NavLink to="/" onClick={() => handlemainClick()}>main</NavLink></li>
-                    <li><NavLink to="/people" onClick={() => handleNavLinkClick("People", 1)} className={activeNav === "People" ? "active" : ""}>People</NavLink></li>
-                    <li><NavLink to="/fetchapi" onClick={() => handleNavLinkClick("fetchapi", 2)} className={activeNav === "FetchApi" ? "active" : ""}>FetchApi</NavLink></li>
-                    <li><NavLink to="/login" onClick={() => handleNavLinkClick("login", 4)} className={activeNav === "Login" ? "active" : ""}>Login</NavLink></li>
-                    <li><NavLink to="/insert" onClick={() => handleNavLinkClick("CreateTable", 3)} className={activeNav === "CreateTable" ? "active" : ""}>Insert</NavLink></li>
-                    <li><NavLink to="/display" onClick={() => handleNavLinkClick("DisplayTable", 5)} className={activeNav === "DisplayTable" ? "active" : ""}>Display</NavLink></li>
-
+                    <li><NavLink to="/login" onClick={() => handleNavLinkClick("login", 4)} activeClassName="active">Login</NavLink></li>
+                    <li><NavLink exact to="/" onClick={() => handlemainClick()}>Intro</NavLink></li>
+                    <li><NavLink to="/people" onClick={() => handleNavLinkClick("People", 1)} activeClassName="active">People</NavLink></li>
+                    <li><NavLink to="/insert" onClick={() => handleNavLinkClick("CreateTable", 3)} activeClassName="active">Platform</NavLink></li>
                 </ul>
             </nav>
-            <main>
+            <main style={{height: '100%'}}>
                 <Outlet />
-                {mainClick && <Main />}
             </main>
-        </>
-    )
-}
-
-export function Main() {
-    return (
-        <div>
-            <h2> This is Frontend on our Project</h2>
         </div>
-    );
+    )
 }
 
 export function People() {

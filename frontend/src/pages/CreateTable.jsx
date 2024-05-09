@@ -4,69 +4,67 @@ import { useMutation } from '@tanstack/react-query'
 import Spinner from '../components/Spinner.jsx'
 import ErrorContainer from '../components/ErrorContainer.jsx'
 import WeatherCard from '../components/WeatherCard.jsx'
-import Slider from 'react-slider';
 //      /** @jsxImportSource @emotion/react */
 import styled from '@emotion/styled'
 import { css } from '@emotion/react'
 import DataAnalysis from '../components/DataAnalysis.jsx'
+import GoogleMap from '../components/GoogleMap.jsx'
+
+// Redux
+import { useDispatch, useSelector } from 'react-redux'
+import { updateImages, selectImages } from '../redux/imagesSlice'
 
 const Platform = styled.div`
-    width: 1000px;
-    height: 400px;
+    width: 100%;    // 나중에 800px;
+    height: 100vh;   // 나중에 600px;
     display: flex;
     align-items: center; /* 수직 가운데 정렬 */
-    flex-direction: column; /* 세로 방향으로 아이템을 배치 */
+    flex-direction: column; /* main axis를 바꿔 세로 방향으로 아이템을 배치 */
 `
 const InputStyle = styled.input`
     margin-bottom: 10px;
-    width: 40vw;
-    height: 3vh;
+    width: 40vw;    // vw: 가로 너비가 줄어들게 함
+    height: 3vh;    
     border-radius: 20px;
-    text-align: center;
+    text-align: center;  // 텍스트 관련요소
 `;
 
 const SearchCity = styled.div`
   display: flex;
-  margin: 50px;
+  margin: 60px;
   // width와 height 로 크기 지정
-  width: 150px;
-  height: 50px;
+  width: auto;
+  height: 70px;
 `;
 
 const CityBox = styled.div`
   display: flex;
   flex-direction: column;
 `
-const ButtonWrapper = styled.div`
+
+const Loading = styled.div`
   align-items: center;
-`;
+  flex-direction: column;
+`
 
 const Button = styled.button`
     height: 80px;
+    width: 120px;
     background-color: #2b7bbe;
     color: #fff;
-    border: 2px solid #2b7bbe;
+    //border: 2px solid #2b7bbe;
     border-radius: 3px;
     font-size: 18px;
     font-weight: 300;
     padding: 5px 20px;
     margin: 5px;
     cursor: pointer;
+    
 
     &:hover {
         background-color: #71b5ed;
     }
 `;
-
-function decodeBase64Image(base64String) {
-    const byteCharacters = atob(base64String);
-    const byteNumbers = new Array(byteCharacters.length);
-    for (let i = 0; i < byteCharacters.length; i++) {
-        byteNumbers[i] = byteCharacters.charCodeAt(i);
-    }
-    const byteArray = new Uint8Array(byteNumbers);
-    return new Blob([byteArray]);
-}
 
 export default function CreateTable() {
     // cityName1 AND cityName2
@@ -78,9 +76,13 @@ export default function CreateTable() {
     const [ loading, setLoading ] = useState(false);
     const [ error, setError ] = useState(null);
     const [ isfetched, setIsfetched ] = useState(false);
-    const [ humidity_img, setHumidityImage ] = useState(null)
-    const [ temp_max_img, setTempMaxImage ] = useState("")    
-    const [ pressure_img, setPressureImage ] = useState("")
+    const [ humidity_img, setHumidityImage ] = useState("")
+    const [ temp_max_img, setTempMaxImage ] = useState(null)   
+    const [ pressure_img, setPressureImage ] = useState(null)
+
+    // redux dispatch: 특정 액션, 이벤트를 전송한다라는 의미 
+    const dispatch = useDispatch();
+    const graphlist = useSelector(selectImages)
 
     const handleSubmit = async (e) => {
         setLoading(true)
@@ -110,28 +112,55 @@ export default function CreateTable() {
             const data = await response.json();
             setVisualization(data)
             if (visualization) {
-                const base64String = visualization['humidity_image']
-                // 이미지 생성
-                console.log(base64String)
-                const imageData = decodeBase64Image(base64String);
-                
-                const imageUrl = URL.createObjectURL(new Blob([imageData]));
-                setHumidityImage(imageUrl);
+                // 이미지 데이터를 바로 사용하기
+                const HumidityImageUrl = `data:image/png;base64,${visualization['humidity_image']}`;
+                setHumidityImage(HumidityImageUrl);
+                // 다른 이미지도 동일한 방법으로 처리
+                const tempMaxImageUrl = `data:image/png;base64,${visualization['max_temp_image']}`;
+                setTempMaxImage(tempMaxImageUrl);
 
-                const temp_max_imageUrl = `data:image/png;base64,${visualization['max_temp_image']}`;
-                setTempMaxImage(temp_max_imageUrl);
-                const pressure_imageUrl = `data:image/png;base64,${visualization['pressure_image']}`;
-                setTempMaxImage(pressure_imageUrl);
+                const pressureImageUrl = `data:image/png;base64,${visualization['pressure_image']}`;
+                setPressureImage(pressureImageUrl);
+                dispatch(updateImages({
+                    "humidity_image": visualization['humidity_image'],
+                    "max_temp_image": visualization['max_temp_image'] ,
+                    "pressure_image": visualization['pressure_image']
+                }))
             }
-            setLoading(false)
-            setIsfetched(true)
 
         } catch(error) {
             console.error("fetch request error", error) 
         } finally {
             setSubmitButton(prev => !prev)
+            setLoading(false)
+            setIsfetched(true)
         }
     }
+
+    const handleUpdate = async (e) => {
+        const controller = new AbortController();
+        try {
+            const response = await fetch('http://localhost:8080/update-table', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                signal: controller.signal
+        })
+        const res = await response.json();
+
+
+        }catch(error) {
+            console.error("Update error", error) 
+            
+        }finally {
+        
+        }
+
+
+    }
+    
+
 
     return (
         <Platform>
@@ -146,16 +175,16 @@ export default function CreateTable() {
                         <InputStyle value={cityName2} placeholder = "City Name 2" onChange = {e => {setCityName2(e.target.value)}} />
                     </CityBox>
                     <Button type = "submit" onClick={handleSubmit}> Compare</Button>
+                    <Button type = "submit" onClick={handleUpdate}> Update</Button>
                 </SearchCity>
             </form>
-            <div>
+            <Loading>
                 {error && <ErrorContainer />}
                 {loading && <Spinner />}
-            </div>
-            {console.log("==humidity_image: ", humidity_img)}
-            {humidity_img && <img src={humidity_img} alt="Humidity" />}
-            {isfetched && <DataAnalysis humidity_image = {humidity_img} temp_max_image = {temp_max_img} pressure_image = {pressure_img}/>}
-            {console.log("==visualization: ", visualization)}
+            </Loading>
+            {isfetched ? <DataAnalysis /> : <GoogleMap />}
+            {/*isfetched &&<DataAnalysis />*/}
+
         </Platform> 
     )
 }

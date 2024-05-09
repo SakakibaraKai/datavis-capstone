@@ -5,6 +5,9 @@ import Slider from 'react-slider';
 //      /** @jsxImportSource @emotion/react */
 import styled from '@emotion/styled'
 import { css } from '@emotion/react'
+import { useDispatch, useSelector } from 'react-redux'
+import { selectImages } from '../redux/imagesSlice';
+
 
 const NavContainer = styled.div`
   width: 800px; /* 고정된 너비 */
@@ -16,7 +19,10 @@ const NavContainer = styled.div`
 const Visualization = styled.div`
     display: flex;
     flex-direction: column;
-
+`
+const image_style = css`
+  width: 800px; /* 가로 크기 */
+  height: 600px; /* 세로 크기 */
 `
 
 const NavButton = styled.button`
@@ -42,9 +48,21 @@ const Container = styled.div`
     height: 100%;
 `;
 
-export default function DataAnalysis({ humidity_image, temp_max_image, pressure_image }) {
+export default function DataAnalysis() {
     const [activeNavItem, setActiveNavItem] = useState(""); // 선택된 네비게이션 아이템 상태
-    // 네비게이션 항목 클릭 이벤트 핸들러
+    const graphslist = useSelector(selectImages)
+    //const [ visualization, setVisualization ] = useState[{}] 
+    console.log("==graph", graphslist)
+
+    // 이미지 데이터를 바로 사용하기
+    const HumidityImageUrl = `data:image/png;base64,${graphslist['humidity_image']}`;
+      // 다른 이미지도 동일한 방법으로 처리
+    const tempMaxImageUrl = `data:image/png;base64,${graphslist['max_temp_image']}`;
+    //setTempMaxImage(tempMaxImageUrl);
+
+    const pressureImageUrl = `data:image/png;base64,${graphslist['pressure_image']}`;
+     // setPressureImage(pressureImageUrl);
+
     const handleNavItemClick = (city) => {
       setActiveNavItem(city); // 선택된 네비게이션 아이템 업데이트
     };
@@ -58,7 +76,6 @@ export default function DataAnalysis({ humidity_image, temp_max_image, pressure_
             onClick={() => handleNavItemClick("Humidity")}
             >
               Humidity
-              {console.log(humidity_image)}
             </NavButton>
             <NavButton
               active={activeNavItem === "Temperature"}
@@ -67,22 +84,28 @@ export default function DataAnalysis({ humidity_image, temp_max_image, pressure_
               Temperture
             </NavButton>
             <NavButton
-              active={activeNavItem === "WindSpeed"}
+              active={activeNavItem === "Pressure"}
               onClick={() => handleNavItemClick("WindSpeed")}
             >
               Pressure
+          </NavButton>
+          <NavButton
+              active={activeNavItem === "WindSpeed"}
+              onClick={() => handleNavItemClick("WindSpeed")}
+            >
+              Map
           </NavButton>
           {activeNavItem && (
                   <Container style={{ border: "2px solid #71b5ed", padding: "10px" }}>
                   {/* 내용 */}
                   {activeNavItem === "Humidity" ? (
-                    <img src={humidity_image} alt="Humidity Image" />
+                    <img src={HumidityImageUrl} alt="Humidity Image" css={image_style} />
                   ) : activeNavItem === "Temperature" ? (
-                    <img src={temp_max_image} alt="Max Temp Image" />
-                  ) : activeNavItem === "Precipitation" ? (
-                    <img src={temp_max_image} alt="Max Temp Image" />
-                  ) : activeNavItem === "WindSpeed" ? (
-                    <img src={pressure_image} alt="Pressure Image" />
+                    <img src={tempMaxImageUrl} alt="Max Temp Image" css={image_style}/>
+                  ): activeNavItem === "Pressure" ? (
+                    <img src={tempMaxImageUrl} alt="Pressure Image" css={image_style}/>
+                  ) : activeNavItem === "Map" ? (
+                    <GooGleMap />
                   ) : null}
                 </Container>
               )}
