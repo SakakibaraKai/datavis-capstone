@@ -9,9 +9,11 @@ from pymysql import err
 import uuid
 import mysql.connector
 import datetime
+import urllib.parse
+from .post import create_table, openAPI_info
 
 jupyter_note_url = "http://127.0.0.1:8000/drawtable"
- 
+api_key = "bb900e932e83b1b8f2d17709f9d801e5"
 # 연결에 필요한 정보
 rds_host = 'capstone-database.c5ys4ks8sbyz.us-west-2.rds.amazonaws.com'
 rds_port = 3306
@@ -28,6 +30,14 @@ conn = mysql.connector.connect(
 )
 
 bp = Blueprint('/gets', __name__)
+
+
+
+cities = ['Corvallis', 'Salem', 'Portland', 'Eugene', 'Bend', 'Beaverton', 'Hillsboro', 'Gresham', 'Lake Oswego', 'Tigard', 'Grants Pass', 'Oregon City', 'Roseburg', 'Hood River']
+
+# 모든 도시 이름에 'OR'을 붙이기
+#cities = [city + ', OR' for city in cities]
+
 
 @bp.route('/', methods = ['GET'])
 def root():
@@ -67,4 +77,20 @@ def show_tables():
             return jsonify({"message": f"Request failed with status code {response.status_code}"})
     else:
         return jsonify({"message": "GET method not supported"})
+    
+
+def return_info():
+    pass
+    
+@bp.route('/update-table', methods = ['GET'])
+def update_tables():
+    cities_info = []
+    count = 0
+    for city in cities:        
+        data = city_info = openAPI_info(city)
+        data['city_name'] = city
+        create_table(city, city_info)
+        cities_info.append(data)
+            #return jsonify({"return": 1})
+    return jsonify({"cities_info": cities_info})
     

@@ -23,8 +23,10 @@ jupyter_note_host = "host.docker.internal"
 jupyter_note_port = 8000
 drawtable_url = f"http://{jupyter_note_host}:{jupyter_note_port}/drawtable"
 drawheatmap_url = f"http://{jupyter_note_host}:{jupyter_note_port}/drawheatmap"
+drawprecip_url = f"http://{jupyter_note_host}:{jupyter_note_port}/drawprecip"
 table_url = "http://localhost:8000/drawtable"
 heatmap_url = "http://localhost:8000/drawheatmap"
+precip_url = "http://localhost:8000/drawprecip"
 
 # 연결에 필요한 정보
 rds_host = 'capstone-database.c5ys4ks8sbyz.us-west-2.rds.amazonaws.com'
@@ -62,9 +64,9 @@ def create_table(city_name, city_info):
             # DB selection
             cursor.execute(f"USE {rds_database}")
             # If table exists, drop it
-            cursor.execute(f"DROP TABLE IF EXISTS {city_name}")
+            cursor.execute(f"DROP TABLE IF EXISTS `{city_name}`")
             # table query creation
-            sql = f"CREATE TABLE IF NOT EXISTS {city_name} ("
+            sql = f"CREATE TABLE IF NOT EXISTS `{city_name}` ("
             sql += "id INT AUTO_INCREMENT PRIMARY KEY,"
             sql += f"{col1} DATE,"
             sql += f"{col2} TIME,"
@@ -90,7 +92,7 @@ def create_table(city_name, city_info):
                 #print("==",date, time, max_temp, min_temp, pop, pressure, humidity, description)
 
                 # 쿼리 작성 및 실행
-                insert_sql = f"INSERT INTO {city_name} ({col1}, {col2}, {col3}, {col4}, {col5}, {col6}, {col7}, {col8}) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
+                insert_sql = f"INSERT INTO `{city_name}` ({col1}, {col2}, {col3}, {col4}, {col5}, {col6}, {col7}, {col8}) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
                 cursor.execute(insert_sql, (date, time, max_temp, min_temp, pop, pressure, humidity, description))
                 conn.commit()
 
@@ -174,7 +176,7 @@ def get_heatmap(city_name1, city_name2):
 
 # 리스트 형식으로 반환
 def get_lat_lon(city_name):
-    url = f"https://api.openweathermap.org/geo/1.0/direct?q={city_name}&limit=5&appid={api_key}"
+    url = f"https://api.openweathermap.org/geo/1.0/direct?q={city_name}&limit=1&appid={api_key}"
     response = requests.get(url)
     response.raise_for_status()
     data = response.json()
@@ -189,7 +191,6 @@ def openAPI_info(city_name):
     response_1 = requests.get(url_1)
     response_1.raise_for_status()
     data_1 = response_1.json()
-    
     # 위도 및 경도 추출
     lat = data_1[0]['lat']
     lon = data_1[0]['lon']
@@ -199,7 +200,6 @@ def openAPI_info(city_name):
     response_2 = requests.get(url_2)
     response_2.raise_for_status()  # 오류가 발생하면 예외를 발생시킵니다.
     data_2 = response_2.json()
-    
     return data_2
 
 def get_precip(lat, lon):
@@ -279,5 +279,37 @@ def create_graphs():
             pass
         
         return graphs
+'''
+{
+    "cityName": "Beaverton",
+    "position": [45.4872, -122.8038]    
+}
+
+    '''    
+        
+@bp.route('/rain', methods= ['POST'])
+def precip_graphs():
+    if request.method == 'POST':
+        content = request.get_json()
+        response = requests.post(precip_url, json=content, verify = False)
+        res_data = response.json()
+        res_data_ids_str = ', '.join(map(str, res_data['ids']))
+        
+        image_data_dict = {}
+        with conn.cursor() as cursor:
+            cursor.execute(f"USE {rds_database}")
+            # 각 이미지의 ID를 사용하여 쿼리 실행하여 이미지 데이터 가져오기
+            cursor.execute(f"SELECT id, date, image_data FROM capstone.precip_images WHERE id IN ({res_data_ids_str})")
+            results = cursor.fetchall()
+            
+            for i, row in enumerate(results):
+                image_id = row[0]
+                date = row[1]
+                image_data = row[2]
+                image_data_dict[f"image_{i+1}"] = {"date": date, "image_data": image_data}
+                
+        return jsonify(image_data_dict)
+
+        
         
         
