@@ -10,7 +10,6 @@ import './index.css'
 import DisplayTable from './pages/DisplayTable'
 import FetchSearch from './pages/FetchSearch'
 import CreateTable from './pages/CreateTable'
-import './data/response.json'
 
 const queryClient = new QueryClient();
 
