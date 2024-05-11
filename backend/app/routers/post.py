@@ -275,7 +275,7 @@ def create_graphs():
         if Over_Standard(lat_1, lon_1, lat_2, lon_2) == True:
             data = get_heatmap(city_name1, city_name2)
             return jsonify({"msg": data})
-        else: 
+        else:
             pass
         
         return graphs
@@ -299,17 +299,14 @@ def precip_graphs():
         with conn.cursor() as cursor:
             cursor.execute(f"USE {rds_database}")
             # 각 이미지의 ID를 사용하여 쿼리 실행하여 이미지 데이터 가져오기
-            cursor.execute(f"SELECT id, date, image_data FROM capstone.precip_images WHERE id IN ({res_data_ids_str})")
+            cursor.execute(f"SELECT id, date, image_data, description FROM capstone.precip_images WHERE id IN ({res_data_ids_str})")
             results = cursor.fetchall()
             
             for i, row in enumerate(results):
                 image_id = row[0]
                 date = row[1]
                 image_data = row[2]
-                image_data_dict[f"image_{i+1}"] = {"date": date, "image_data": image_data}
-                
+                image_description = row[3]
+                image_data_dict[f"image_{i+1}"] = {"date": date, "description": image_description, "image_data": image_data}
+        
         return jsonify(image_data_dict)
-
-        
-        
-        
