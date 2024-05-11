@@ -1,4 +1,4 @@
-name: Docker Front
+name: Docker Jupyter
 
 on:
   push:
