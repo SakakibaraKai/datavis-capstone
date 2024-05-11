@@ -21,7 +21,7 @@ jobs:
 
     - name: builder the docker image
       run: |
-        docker build -t frontend .
+        docker build -t jupyter .
 
     - name: Login to Dockerhub
       uses: docker/login-action@v2
