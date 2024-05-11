@@ -19,7 +19,7 @@ jobs:
       with:
         ref: feature-frontend
 
-    - name: builder the dcker image
+    - name: builder the docker image
       run: |
         cd frontend
         docker build -t frontend .
