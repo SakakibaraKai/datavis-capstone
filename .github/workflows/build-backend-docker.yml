@@ -34,5 +34,5 @@ jobs:
       with:
         context: backend/
         push: true
-        tags: depwegk/githubactionpushed:backend_latest
+        tags: depwegk/big_data_and_the_cloud:backend_latest
       
