@@ -21,6 +21,7 @@ jobs:
 
     - name: builder the docker image
       run: |
+        cd jupyter
         docker build -t jupyter .
 
     - name: Login to Dockerhub
@@ -32,6 +33,6 @@ jobs:
     - name: Push DockerImage
       uses: docker/build-push-action@v4
       with:
-        context: /
+        context: jupyter/
         push: true
         tags: depwegk/big_data_and_the_cloud:jupyter_latest
