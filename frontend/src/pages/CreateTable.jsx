@@ -32,9 +32,11 @@ const InputStyle = styled.input`
 
 const SearchCity = styled.div`
   display: flex;
-  margin: 60px;
+  margin-top: 8px;
+  margin-bottom: 35px;
+  margin-left: 25px;
+  margin-right: 25px;
   // width와 height 로 크기 지정
-  width: auto;
   height: 70px;
 `;
 
@@ -42,7 +44,6 @@ const CityBox = styled.div`
   display: flex;
   flex-direction: column;
 `
-
 const Loading = styled.div`
   align-items: center;
   flex-direction: column;
