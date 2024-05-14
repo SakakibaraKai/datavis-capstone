@@ -6,30 +6,30 @@ export const AuthContext = createContext(null);
 export const AuthProvider = ({ children }) => {
 
     const checkTokenValidity = () => { 
-        //make a request to the validtoken endpoint to check if the token is valid
         const token = localStorage.getItem('token');
         if (!token) {
             return false;
         }
-        try {
-            const response =  fetch('http://localhost:5000/validtoken', {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-            if (response.status === 200) {
-                return true;
+        fetch("http://localhost:8080/validate", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
+        }).then(response => {
+            if (!response.ok) {
+                return false;
             }
-            return false;
-        } catch (error) {
-            console.error(error);
-            return false;
-        }
+            return response.json();
+
+        })
+
+        return true;
+       
     }
 
     const [loggedIn, setLoggedIn] = useState(checkTokenValidity());
+
 
     const status = loginStatus => {
         setLoggedIn(loginStatus);

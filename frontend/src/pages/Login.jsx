@@ -7,25 +7,66 @@ import { jwtDecode } from 'jwt-decode'
 const Login = () => {
     const { loggedIn, status } = useContext(AuthContext);
     const [failure, setFailure ] = useState(false);
-    const [user, setUser] = useState({});
 
     const [formData, setFormData] = useState({
         "email": "",
         "password": ""
     })
 
-    function handleCallbackResponse (response) {
-        localStorage.setItem("token", response.credential)
-        status(true)
-    }
+
+    const [newUser, setNewUser] = useState({
+        "name": "",
+        "email": "",
+        "password": "",
+        "is_admin": false
+    })
+
 
     const handleChange = (e) => {
         setFormData({...formData, [e.target.name]: e.target.value})
     }
 
+    const handleNewUserChange = (e) => {
+        setNewUser(prevUserData => {
+
+            return {...prevUserData,
+                [e.target.name]: e.target.type === "checkbox" ? e.target.checked : e.target.value
+            }
+        }
+        )
+    }
+
     const handleLogOut = () => {
         status(false)
         localStorage.clear("token")
+    }
+
+    const handleNewUser = (e) => {
+        e.preventDefault()
+        newUser.is_admin = newUser.is_admin ? 1 : 0
+
+        fetch("http://localhost:8080/register", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${localStorage.getItem("token")}`
+            },
+            body: JSON.stringify(newUser)
+        })
+        .then(response => {
+            return response.json();
+        })
+        .then(data => {
+            setNewUser({
+                "name": "",
+                "email": "",
+                "password": "",
+                "is_admin": false
+            })
+        })
+        .catch(error =>  {
+            
+        })
     }
 
     const handleSubmit = (e) => {
@@ -56,20 +97,6 @@ const Login = () => {
             setFailure(true)
         })
     }
-
-    useEffect(() => {
-        google.accounts.id.initialize({
-            client_id: "523569965084-k65jdc3qu1n9ptqn4ghlo1cmrrams16n.apps.googleusercontent.com",
-            callback: handleCallbackResponse
-        })
-
-        google.accounts.id.renderButton(
-            document.getElementById("google-login"),
-            {theme: "outline", size: "large"}
-        )
-
-    }, [])
-
     
     if (!loggedIn) {
         return (
@@ -83,8 +110,6 @@ const Login = () => {
                     {failure && <label className="failure">Login Failed!</label>}
                     <button>Login</button>
                 </form>
-                <p>or Sign in with Google</p>
-                <div id="google-login"></div>
                 <Outlet />
             </div>
         )
@@ -93,6 +118,21 @@ const Login = () => {
         return (
             <div className="login-page">
                 <h1>Hey, {user.name}</h1>
+                {Boolean(user.is_admin) && <h1>Admin Panel</h1>}
+                {Boolean(user.is_admin) && <div className="admin-panel"> 
+                    <h1>Create a new user</h1>
+                    <form className="login-form" onSubmit={handleNewUser}>
+                        <label>Name</label>
+                        <input type="text" name="name" value={newUser.name} onChange={handleNewUserChange} />
+                        <label>Email</label>
+                        <input type="email" name="email" value={newUser.email} onChange={handleNewUserChange} />
+                        <label>Password</label>
+                        <input type="password" name="password" value={newUser.password} onChange={handleNewUserChange} />
+                        <label>Admin Privilege</label>
+                        <input type="checkbox" name="is_admin" checked={newUser.is_admin} onChange={handleNewUserChange} />
+                        <button>Create User</button>
+                    </form>
+                </div>}
                 <h1 className="logout" onClick={handleLogOut}>Logout</h1>
                 <Outlet />
             </div>
