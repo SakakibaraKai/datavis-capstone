@@ -59,10 +59,10 @@ def login():
     user = json.loads(request.data)
     if "password" in user and "email" in user:
         query_data = execute_query(
-            "SELECT name, password, id FROM user WHERE email = %s"
+            "SELECT name, password, id, is_admin FROM user WHERE email = %s"
         , (user['email']))
         #0 - Name. 1- Password
-        err, message, status = validatePassword(user['password'].encode('utf-8'), query_data[0][1].encode('utf-8'), query_data[0][2], query_data[0][0])
+        err, message, status = validatePassword(user['password'].encode('utf-8'), query_data[0][1].encode('utf-8'), query_data[0][2], query_data[0][0], query_data[0][3])
         if err:
             return {"error": message}, status
         return{"token": message}, status
@@ -74,7 +74,7 @@ def login():
 @isAuthorizedAdmin
 def register():
     user = json.loads(request.data)
-    if "name" in user and "password" in user and "email" in user:
+    if "name" in user and "password" in user and "email" and "is_admin" in user:
         #encrypt password for storage
         hashed_password = hashPassword(user["password"].encode('utf-8'))
         
@@ -84,7 +84,7 @@ def register():
 
         #add user to the table
         error, result = execute_query(
-            "INSERT INTO user (email, name, password) VALUES (%s, %s, %s)" , (user['email'], user['name'], hashed_password)
+            "INSERT INTO user (email, name, password, is_admin) VALUES (%s, %s, %s, %s)" , (user['email'], user['name'], hashed_password, user['is_admin'])
         )
 
         #handle errors

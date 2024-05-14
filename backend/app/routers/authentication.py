@@ -21,19 +21,20 @@ def validateToken(token : str):
         return True, "Invalid Token"
 
     
-def createToken(id, name):
+def createToken(id, name, adminstatus):
     token_secret : str = os.getenv('JWT_SECRET')
     token = jwt.encode({
         "id" : id,
         "name" : name,
+        "is_admin" : adminstatus
     }, "token_secret", algorithm="HS256")
 
     return token
 
 
-def validatePassword(password, hashedPassword, id, name):
+def validatePassword(password, hashedPassword, id, name, adminstatus):
     if bcrypt.checkpw(password, hashedPassword):
-        token = createToken(id, name)
+        token = createToken(id, name, adminstatus)
         return False, token, 200
     return True, "Unauthorized", 401
 
@@ -62,6 +63,7 @@ def isAuthorizedAdmin(func):
             if query_data[0][0] != 1:
                 return {"error" : "Not valid"}, 400
             return func(*args, **kwargs)
+        return {"error" : "Not valid"}, 400
     return decoratedFunction
 
 def isAuthorized(func):
@@ -74,4 +76,5 @@ def isAuthorized(func):
             if (err):
                 return {"error" : "Not valid"}, 400
             return func(*args, **kwargs)
+        return {"error" : "Not valid"}, 400
     return decoratedFunction
