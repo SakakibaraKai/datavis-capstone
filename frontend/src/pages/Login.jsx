@@ -2,10 +2,12 @@ import { useEffect, useState } from "react"
 import { Outlet } from "react-router-dom"
 import { AuthContext } from '../auth-context';
 import{ useContext } from 'react';
+import { jwtDecode } from 'jwt-decode'
 
 const Login = () => {
     const { loggedIn, status } = useContext(AuthContext);
     const [failure, setFailure ] = useState(false);
+    const [user, setUser] = useState({});
 
     const [formData, setFormData] = useState({
         "email": "",
@@ -28,21 +30,30 @@ const Login = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault()
-        fetch("http://localhost:8000/login", {
+        fetch("http://localhost:5000/login", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify(formData)
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('FAILED TO LOGIN');
+            }
+            return response.json();
+        })
         .then(data => {
             localStorage.setItem("token", data.token)
             status(true)
+            setFailure(false)
+            setFormData({
+                "email": "",
+                "password": ""
+            })
         })
         .catch(error =>  {
             setFailure(true)
-            console.log("error")
         })
     }
 
@@ -78,9 +89,10 @@ const Login = () => {
             </div>
         )
     } else {
+        const user = jwtDecode(localStorage.getItem("token"))
         return (
             <div className="login-page">
-                <h1>Hey, </h1>
+                <h1>Hey, {user.name}</h1>
                 <h1 className="logout" onClick={handleLogOut}>Logout</h1>
                 <Outlet />
             </div>

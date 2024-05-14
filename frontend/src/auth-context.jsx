@@ -7,13 +7,12 @@ export const AuthProvider = ({ children }) => {
 
     const checkTokenValidity = () => { 
         //make a request to the validtoken endpoint to check if the token is valid
-        //make a test token
         const token = localStorage.getItem('token');
         if (!token) {
             return false;
         }
         try {
-            const response =  fetch('http://localhost:8000/validtoken', {
+            const response =  fetch('http://localhost:5000/validtoken', {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
