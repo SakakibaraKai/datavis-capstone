@@ -1,12 +1,17 @@
 import pymysql
 
+rds_host = 'capstone-database.c5ys4ks8sbyz.us-west-2.rds.amazonaws.com'
+rds_port = 3306
+rds_user = 'admin'  # 사용자명 입력
+rds_password = 'capstone'  # 비밀번호 입력
+rds_database = 'capstone'  # 데이터베이스 이름 입력
+
 conn = pymysql.connect(
-    host = 'localhost',
-    #host='host.docker.internal',
-    user='root',
-    password='admin',
-    charset='utf8mb4',
-    db="dataplatform"
+    host=rds_host,
+    port=rds_port,
+    user=rds_user,
+    password=rds_password,
+    database=rds_database
 )
 
 def execute_query(query, params=None):

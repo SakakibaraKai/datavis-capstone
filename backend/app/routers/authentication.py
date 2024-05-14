@@ -8,8 +8,9 @@ load_dotenv()
 
 def validateToken(token : str):
     token_secret : str = os.getenv('JWT_SECRET')
+    print(token_secret)
     try:
-        payload = jwt.decode(token, token_secret, algorithms=["HS256"]) 
+        payload = jwt.decode(token, "token_secret", algorithms=["HS256"]) 
         return False, payload
     except InvalidSignatureError as e:
         return True, "Invalid Token"
@@ -20,7 +21,7 @@ def createToken(id, name):
     token = jwt.encode({
         "id" : id,
         "name" : name,
-    }, "token_test", algorithm="HS256")
+    }, "token_secret", algorithm="HS256")
 
     return token
 
