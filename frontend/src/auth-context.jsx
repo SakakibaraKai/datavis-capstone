@@ -17,15 +17,16 @@ export const AuthProvider = ({ children }) => {
                 "Authorization": `Bearer ${token}`
             },
         }).then(response => {
-            if (!response.ok) {
+            if (response.ok) {
+                return true;
+            } else {
                 return false;
             }
-            return response.json();
-
         })
+        .catch(error => {
+            return false;
+        });
 
-        return true;
-       
     }
 
     const [loggedIn, setLoggedIn] = useState(checkTokenValidity());
