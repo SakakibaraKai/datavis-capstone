@@ -1,16 +1,20 @@
 import { useEffect, useState } from "react"
 import { Outlet } from "react-router-dom"
+import { AuthContext } from '../auth-context';
+import{ useContext } from 'react';
+
 const Login = () => {
+    const { loggedIn, status } = useContext(AuthContext);
+    const [failure, setFailure ] = useState(false);
+
     const [formData, setFormData] = useState({
         "email": "",
         "password": ""
     })
 
-    const [loggedIn, setLoggedIn] = useState(localStorage.getItem("token"))
-
     function handleCallbackResponse (response) {
         localStorage.setItem("token", response.credential)
-        setLoggedIn(true)
+        status(true)
     }
 
     const handleChange = (e) => {
@@ -18,7 +22,7 @@ const Login = () => {
     }
 
     const handleLogOut = () => {
-        setLoggedIn(false)
+        status(false)
         localStorage.clear("token")
     }
 
@@ -34,9 +38,12 @@ const Login = () => {
         .then(response => response.json())
         .then(data => {
             localStorage.setItem("token", data.token)
-            setLoggedIn(true)
+            status(true)
         })
-        .catch(error => console.log(error))
+        .catch(error =>  {
+            setFailure(true)
+            console.log("error")
+        })
     }
 
     useEffect(() => {
@@ -52,21 +59,33 @@ const Login = () => {
 
     }, [])
 
-    return (
-        <div className="login-page">
-            <form className="login-form" onSubmit={handleSubmit}>
-                <label>Email</label>
-                <input type="email" name="email" value={formData.email} onChange={handleChange} />
-                <label>Password</label>
-                <input type="password" name="password" value={formData.password} onChange={handleChange}/>
-                <button>Login</button>
-            </form>
-            <p>or Sign in with Google</p>
-            <div id="google-login"></div>
-            {loggedIn && <h1 className="logout" onClick={handleLogOut}>Logout</h1>}
-            <Outlet />
-        </div>
-    )
+    
+    if (!loggedIn) {
+        return (
+            <div className="login-page">
+                
+                <form className="login-form" onSubmit={handleSubmit}>
+                    <label>Email</label>
+                    <input type="email" name="email" value={formData.email} onChange={handleChange} />
+                    <label>Password</label>
+                    <input type="password" name="password" value={formData.password} onChange={handleChange}/>
+                    {failure && <label className="failure">Login Failed!</label>}
+                    <button>Login</button>
+                </form>
+                <p>or Sign in with Google</p>
+                <div id="google-login"></div>
+                <Outlet />
+            </div>
+        )
+    } else {
+        return (
+            <div className="login-page">
+                <h1>Hey, </h1>
+                <h1 className="logout" onClick={handleLogOut}>Logout</h1>
+                <Outlet />
+            </div>
+        )
+    }
 }
 
 export default Login
