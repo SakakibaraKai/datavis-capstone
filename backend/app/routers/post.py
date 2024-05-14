@@ -58,7 +58,7 @@ def validate():
         err, status = validateToken(token)
         if (err):
             return {"error" : "Not valid"}, 400
-        return { token }, 200
+        return { "token", token }, 200
     return {"error" : "Not valid"}, 400
         
 
