@@ -8,11 +8,12 @@ from pymysql import err
 from .sqlsetup import execute_query
 import uuid
 import mysql.connector
-from .authentication import createToken, validateToken, validatePassword, hashPassword
+from .authentication import createToken, validateToken, validatePassword, hashPassword, isAuthorized, isAuthorizedAdmin
 from math import radians, sin, cos, sqrt, atan2
 from concurrent.futures import ProcessPoolExecutor
 from .heatmap import get_points, distance_from_A_B, Over_Standard
 import base64
+from functools import wraps
 
 session = requests.session()
 
@@ -46,21 +47,12 @@ conn = mysql.connector.connect(
 R = 6371.0
 Standard_Distance = 223
 
-@bp.route('/users', methods = ['POST'])
-def create_user(user_id: int):
-    return {'id': user_id}
 
 @bp.route('/validate', methods = ['POST'])
+@isAuthorized
 def validate():
-    auth_header = request.headers.get('Authorization')
-    if auth_header and auth_header.startswith('Bearer '):
-        token = str(auth_header.split(' ')[1])
-        err, status = validateToken(token)
-        if (err):
-            return {"error" : "Not valid"}, 400
-        return { "token", token }, 200
-    return {"error" : "Not valid"}, 400
-        
+    return { "token" : request.headers.get('Authorization').split(' ')[1] }, 200
+
 
 @bp.route('/login', methods = ['POST'])
 def login():
@@ -77,7 +69,9 @@ def login():
         
     return {"error" : "Missing one or more fields!"}, 400
 
+
 @bp.route('/register', methods = ['POST'])
+@isAuthorizedAdmin
 def register():
     user = json.loads(request.data)
     if "name" in user and "password" in user and "email" in user:
@@ -100,6 +94,7 @@ def register():
         return(user)
             
     return {"error" : "Missing one or more fields!"}, 400
+
 
 def create_table(city_name, city_info):
     col1 = "date"
