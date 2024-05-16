@@ -93,4 +93,3 @@ def update_tables():
         cities_info.append(data)
             #return jsonify({"return": 1})
     return jsonify({"cities_info": cities_info})
-    

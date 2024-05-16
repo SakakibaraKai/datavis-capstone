@@ -27,6 +27,7 @@ drawprecip_url = f"http://{jupyter_note_host}:{jupyter_note_port}/drawprecip"
 table_url = "http://localhost:8000/drawtable"
 heatmap_url = "http://localhost:8000/drawheatmap"
 precip_url = "http://localhost:8000/drawprecip"
+pychart_url = "http://localhost:8000/drawpychart"
 
 # 연결에 필요한 정보
 rds_host = 'capstone-database.c5ys4ks8sbyz.us-west-2.rds.amazonaws.com'
@@ -59,6 +60,8 @@ def create_table(city_name, city_info):
     col6 = "pressure"
     col7 = "humidity"
     col8 = "description"
+    #col8 = "s"
+    #col9 = "s"
     try:
         with conn.cursor() as cursor:
             # DB selection
@@ -158,7 +161,7 @@ def check_table():
 
 def get_table(city_name1, city_name2):
     data = {"city_name1": city_name1, "city_name2": city_name2}
-    response = requests.post(drawtable_url, json=data, verify = False)
+    response = requests.post(table_url, json=data, verify = False)
     return response.content
 
 def get_heatmap(city_name1, city_name2):
@@ -228,57 +231,44 @@ def create_graphs():
         city_name1 = content['city_name1']
         city_name2 = content['city_name2']
         
-        city_info1 = openAPI_info(city_name1)
-        city_info2 = openAPI_info(city_name2)
+        #city_info1 = openAPI_info(city_name1)
+        #city_info2 = openAPI_info(city_name2)
         
         # 두 개의 도시 테이블 생성
-        create_table(city_name1, city_info1)
-        create_table(city_name2, city_info2)
-        
+        #create_table(city_name1, city_info1)
+        #create_table(city_name2, city_info2)
+
         # 그래프 얻어오기
         graphs = get_table(city_name1, city_name2)
         # graphs를 문자열로 디코딩하여 JSON 객체로 변환
         graphs_json = graphs.decode('utf-8')
-        graphs_dict = json.loads(graphs_json)
+        res = json.loads(graphs_json)
 
-        humidity_id = graphs_dict["humidity_img_id"]
-        max_temp_id = graphs_dict["max_temp_img_id"]
-        pressure_id = graphs_dict["pressure_img_id"]
+        image_id = res["id"]
         with conn.cursor() as cursor:
             cursor.execute(f"USE {rds_database}")
             # 각 이미지의 ID를 사용하여 쿼리 실행하여 이미지 데이터 가져오기
-            cursor.execute(f"SELECT image_data FROM images WHERE id = %s", (humidity_id,))
-            humidity_image_data = cursor.fetchone()
+            cursor.execute(f"SELECT max_temp_img, min_temp_img, humidity_img, pressure_img FROM images WHERE id = %s", (image_id,))
+            image_data = cursor.fetchall()
             #print(humidity_image_data)
-            
-            cursor.execute(f"SELECT image_data FROM images WHERE id = %s", (max_temp_id,))
-            max_temp_image_data = cursor.fetchone()
-            #print(max_temp_image_data)
-
-            cursor.execute(f"SELECT image_data FROM images WHERE id = %s", (pressure_id,))
-            pressure_image_data = cursor.fetchone()
             #print(pressure_image_data)
-
-        res = {
-            "humidity_image": humidity_image_data[0] if humidity_image_data else None,
-            "max_temp_image": max_temp_image_data[0] if max_temp_image_data else None,
-            "pressure_image": pressure_image_data[0] if pressure_image_data else None
-        }
-
-        return jsonify(res)
         
-    if request.method == 'GET':
-        city_name1 = 'Portland'
-        city_name2 = 'Seattle'
-        lat_1, lon_1 = get_lat_lon(city_name1)
-        lat_2, lon_2 = get_lat_lon(city_name2)
-        if Over_Standard(lat_1, lon_1, lat_2, lon_2) == True:
-            data = get_heatmap(city_name1, city_name2)
-            return jsonify({"msg": data})
-        else:
-            pass
+            image = {
+                "max_temp_img": image_data[0][0],
+                "min_temp_img": image_data[0][1],
+                "humidity_img": image_data[0][2],
+                "pressure_img": image_data[0][3]
+            }
+
+            return jsonify(image)
         
-        return graphs
+@bp.route('/draw-chart', methods= ['POST'])
+def create_charts():
+    if request.method == 'POST':
+        content = request.get_json()
+        response = requests.post(pychart_url, json=content, verify = False)
+        data = response.json()
+        return data
 '''
 {
     "cityName": "Beaverton",
@@ -293,20 +283,25 @@ def precip_graphs():
         content = request.get_json()
         response = requests.post(precip_url, json=content, verify = False)
         res_data = response.json()
+        print(res_data)
         res_data_ids_str = ', '.join(map(str, res_data['ids']))
         
         image_data_dict = {}
         with conn.cursor() as cursor:
             cursor.execute(f"USE {rds_database}")
             # 각 이미지의 ID를 사용하여 쿼리 실행하여 이미지 데이터 가져오기
-            cursor.execute(f"SELECT id, date, image_data, description FROM capstone.precip_images WHERE id IN ({res_data_ids_str})")
+            cursor.execute(f"SELECT id, date, image_data1, image_data2, description,precipitation, humidity, temperature FROM capstone.precip_images WHERE id IN ({res_data_ids_str})")
             results = cursor.fetchall()
             
             for i, row in enumerate(results):
                 image_id = row[0]
                 date = row[1]
-                image_data = row[2]
-                image_description = row[3]
-                image_data_dict[f"image_{i+1}"] = {"date": date, "description": image_description, "image_data": image_data}
+                image_data1 = row[2]
+                image_data2 = row[3]
+                image_description = row[4]
+                precipitation = row[5]
+                humidity = row[6]
+                temperature = row[7]
+                image_data_dict[f"image_{i+1}"] = {"date": date, "description": image_description, "image_data1": image_data1, "image_data2": image_data2, "image_data" "humidity": humidity, "precipitation": precipitation, "temperature": temperature}
         
         return jsonify(image_data_dict)
