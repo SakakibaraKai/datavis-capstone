@@ -1,45 +1,45 @@
-{
-    "1": {
-      "name": "Jeongmuk",
-      "height": "178",
-      "mass": "68",
-      "birth_year": "19BBY",
-      "gender": "male",
-      "url": "/people/1/"
-    },
-    "2": {
-      "name": "Zoie",
-      "height": "167",
-      "mass": "45",
-      "gender": "female",
-      "url": "/people/2/"
-    },
-    "3": {
-      "name": "Kai",
-      "height": "183",
-      "mass": "62",
-      "gender": "male",
-      "url": "/people/3/"
-    },
-    "4": {
-      "name": "Jonathan",
-      "height": "175",
-      "mass": "70",
-      "gender": "male",
-      "url": "/people/4/"
-    },
-    "5": {
-      "name": "Noah",
-      "height": "180",
-      "mass": "75",
-      "gender": "male",
-      "url": "/people/5/"
-    },
-    "6": {
-      "name": "Juli",
-      "height": "166",
-      "mass": "45",
-      "gender": "female",
-      "url": "/people/6/"
-    }
+[
+  {
+    "id": 1,
+    "name": "Kai",
+    "bio": "Webdev and Ai major",
+    "image": "Kai.jpg",
+    "linkedin": "https://www.linkedin.com/in/creator1/"
+  },
+  {
+    "id": 2,
+    "name": "Jeongmuk",
+    "bio": "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
+    "image": "Jeonqmuk.jpg",
+    "linkedin": "https://www.linkedin.com/in/creator2/"
+  },
+  {
+    "id": 3,
+    "name": "Zoie",
+    "bio": "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
+    "image": "Zoie.jpg",
+    "linkedin": "https://www.linkedin.com/in/creator2/"
+  },
+  {
+    "id": 4,
+    "name": "Jonathan",
+    "bio": "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
+    "image": "Jonathan.jpg",
+    "linkedin": "https://www.linkedin.com/in/creator2/"
+  },
+  {
+    "id": 5,
+    "name": "Noah",
+    "bio": "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
+    "image": "Noah.jpg",
+    "linkedin": "https://www.linkedin.com/in/creator2/"
+  },
+  {
+    "id": 6,
+    "name": "Jules",
+    "bio": "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
+    "image": "Jules.jpg",
+    "linkedin": "https://www.linkedin.com/in/creator2/"
   }
+]
+

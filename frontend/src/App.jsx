@@ -3,10 +3,12 @@ import { useState, useEffect, useContext } from 'react';
 import { Link, NavLink, Outlet, useParams, useRouteError, useLocation } from 'react-router-dom';
 import PersonData from './data/people.json'; // bring Data
 import { css } from '@emotion/react';
+import { AuthContext } from './auth-context';
 
 
 
-export function Root() {
+export function Root () {
+    const { loggedIn } = useContext(AuthContext);
     const [activeNav, setActiveNav] = useState(null); 
     const [navClick, setnavClick] = useState(0);
     const [mainClick, setmainClick] = useState(true);
@@ -26,10 +28,10 @@ export function Root() {
         <div style={{ display: 'flex', height:'100%'}}>
             <nav style={{ flex: 'none'}}>
                 <ul>
-                    <li><NavLink to="/login" onClick={() => handleNavLinkClick("login", 4)} activeClassName="active">Login</NavLink></li>
-                    <li><NavLink exact to="/" onClick={() => handlemainClick()}>Intro</NavLink></li>
-                    <li><NavLink to="/people" onClick={() => handleNavLinkClick("People", 1)} activeClassName="active">People</NavLink></li>
-                    <li><NavLink to="/insert" onClick={() => handleNavLinkClick("CreateTable", 3)} activeClassName="active">Platform</NavLink></li>
+                    <li><NavLink to="/login" onClick={() => handleNavLinkClick("login", 4)} activeClassName="active">{loggedIn ? "Profile" : "Login"}</NavLink></li>
+                    {loggedIn && <li><NavLink exact to="/" onClick={() => handlemainClick()}>Intro</NavLink></li> }
+                    {loggedIn && <li><NavLink to="/people" onClick={() => handleNavLinkClick("People", 1)} activeClassName="active">People</NavLink></li> }
+                    {loggedIn && <li><NavLink to="/insert" onClick={() => handleNavLinkClick("CreateTable", 3)} activeClassName="active">Platform</NavLink></li> } 
                 </ul>
             </nav>
             <main style={{height: '100%', width: '60%'}}>
