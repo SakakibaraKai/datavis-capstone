@@ -1,4 +1,5 @@
 from flask import Blueprint, request, Flask, jsonify, make_response, session, send_file
+from .authentication import isAuthorized, isAuthorizedAdmin
 from typing import Optional
 import requests
 import json
@@ -83,6 +84,7 @@ def return_info():
     pass
     
 @bp.route('/update-table', methods = ['GET'])
+@isAuthorizedAdmin
 def update_tables():
     cities_info = []
     count = 0

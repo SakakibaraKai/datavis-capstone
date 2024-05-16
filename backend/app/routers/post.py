@@ -5,14 +5,15 @@ import json
 import pymysql
 import bcrypt
 from pymysql import err
-#from .sqlsetup import execute_query
+from .sqlsetup import execute_query
 import uuid
 import mysql.connector
-#from .authentication import createToken, validateToken, validatePassword, hashPassword
+from .authentication import createToken, validateToken, validatePassword, hashPassword, isAuthorized, isAuthorizedAdmin
 from math import radians, sin, cos, sqrt, atan2
 from concurrent.futures import ProcessPoolExecutor
 from .heatmap import get_points, distance_from_A_B, Over_Standard
 import base64
+from functools import wraps
 
 session = requests.session()
 
@@ -47,9 +48,54 @@ conn = mysql.connector.connect(
 R = 6371.0
 Standard_Distance = 223
 
-@bp.route('/users', methods = ['POST'])
-def create_user(user_id: int):
-    return {'id': user_id}
+
+@bp.route('/validate', methods = ['POST'])
+@isAuthorized
+def validate():
+    return { "token" : request.headers.get('Authorization').split(' ')[1] }, 200
+
+
+@bp.route('/login', methods = ['POST'])
+def login():
+    user = json.loads(request.data)
+    if "password" in user and "email" in user:
+        query_data = execute_query(
+            "SELECT name, password, id, is_admin FROM user WHERE email = %s"
+        , (user['email']))
+        #0 - Name. 1- Password
+        err, message, status = validatePassword(user['password'].encode('utf-8'), query_data[0][1].encode('utf-8'), query_data[0][2], query_data[0][0], query_data[0][3])
+        if err:
+            return {"error": message}, status
+        return{"token": message}, status
+        
+    return {"error" : "Missing one or more fields!"}, 400
+
+
+@bp.route('/register', methods = ['POST'])
+@isAuthorizedAdmin
+def register():
+    user = json.loads(request.data)
+    if "name" in user and "password" in user and "email" and "is_admin" in user:
+        #encrypt password for storage
+        hashed_password = hashPassword(user["password"].encode('utf-8'))
+        
+        #delete password so we can send the user back
+        if 'password' in user:
+            del user['password']
+
+        #add user to the table
+        error, result = execute_query(
+            "INSERT INTO user (email, name, password, is_admin) VALUES (%s, %s, %s, %s)" , (user['email'], user['name'], hashed_password, user['is_admin'])
+        )
+
+        #handle errors
+        if error:
+            return {"error" : result}, 400
+        
+        return(user)
+            
+    return {"error" : "Missing one or more fields!"}, 400
+
 
 def create_table(city_name, city_info):
     col1 = "date"
@@ -107,44 +153,6 @@ def create_table(city_name, city_info):
     finally:
         return jsonify({"message": "Table successfully created"})
 
-@bp.route('/login', methods = ['POST'])
-def login():
-    user = json.loads(request.data)
-    if "password" in user and "email" in user:
-        query_data = execute_query(
-            "SELECT name, password, id FROM user WHERE email = %s"
-        , (user['email']))
-        #0 - Name. 1- Password
-        err, message, status = validatePassword(user['password'].encode('utf-8'), query_data[0][1].encode('utf-8'), query_data[0][2], query_data[0][0])
-        if err:
-            return {"error": message}, status
-        return{"token": message}, status
-        
-    return {"error" : "Missing one or more fields!"}, 400
-
-@bp.route('/register', methods = ['POST'])
-def register():
-    user = json.loads(request.data)
-    if "name" in user and "password" in user and "email" in user:
-        #encrypt password for storage
-        hashed_password = hashPassword(user["password"].encode('utf-8'))
-        
-        #delete password so we can send the user back
-        if 'password' in user:
-            del user['password']
-
-        #add user to the table
-        error, result = execute_query(
-            "INSERT INTO user (email, name, password) VALUES (%s, %s, %s)" , (user['email'], user['name'], hashed_password)
-        )
-
-        #handle errors
-        if error:
-            return {"error" : result}, 400
-        
-        return(user)
-            
-    return {"error" : "Missing one or more fields!"}, 400
 
 @bp.route('/checktable', methods = ['GET'])
 def check_table():

@@ -1,5 +1,5 @@
-from app.routers import post, get, delete, put
-#from routers import post, get, delete, put
+#from app.routers import post, get, delete, put
+from routers import post, get, delete, put
 from flask import Flask, render_template, session
 from dotenv import load_dotenv, find_dotenv
 from os import environ as env
@@ -19,5 +19,7 @@ if ENV_FILE:
 app.secret_key = env.get("APP_SECRET_KEY")
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8080, debug=True)
-    #app.run(debug=True)
+    #app.run(host="0.0.0.0", port=8080, debug=True)
+    app.run(debug=True)
+
+
