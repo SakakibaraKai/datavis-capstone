@@ -8,17 +8,18 @@ const imagesSlice = createSlice({
     initialState: {
         humidity_image: null, // 초기값은 null 또는 다른 적절한 값으로 설정하세요
         max_temp_image: null, // 초기값은 null 또는 다른 적절한 값으로 설정하세요
+        min_temp_image: null,
         pressure_image: null, // 초기값은 null 또는 다른 적절한 값으로 설정하세요
     },
     reducers: {
         updateImages(state, action) {
-            const { humidity_image, max_temp_image, pressure_image } = action.payload;
-            console.log(action.payload)
+            const { humidity_image, max_temp_image, min_temp_image, pressure_image } = action.payload;
             
             return {
                 ...state,
                 humidity_image,
                 max_temp_image,
+                min_temp_image,
                 pressure_image
             };
         }

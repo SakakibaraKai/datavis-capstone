@@ -32,9 +32,12 @@ export function Root() {
                     <li><NavLink to="/insert" onClick={() => handleNavLinkClick("CreateTable", 3)} activeClassName="active">Platform</NavLink></li>
                 </ul>
             </nav>
-            <main style={{height: '100%'}}>
+            <main style={{height: '100%', width: '60%'}}>
                 <Outlet />
             </main>
+            <sub style={{height: '100%'}}>
+
+            </sub>
         </div>
     )
 }

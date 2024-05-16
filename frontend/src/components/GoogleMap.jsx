@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { APIProvider, Map, Marker } from '@vis.gl/react-google-maps';
 import { selectCities } from '../redux/citiesSlice.js';
-import { useSelector } from 'react-redux'
 import styled from '@emotion/styled'
 import { css } from '@emotion/react'
 import res from '../data/rain.json'
 import icons from '../data/description.json'
+import { useDispatch, useSelector } from 'react-redux'
+import { updateLocation, selectLocations } from '../redux/locationsSlice.js'
+import { selectButtons, closebutton } from '../redux/buttonsSlice';
 
 // Black Board CSS
 const MarkerInfoContainer = styled.div`
@@ -61,11 +63,24 @@ const LocationInfo = styled.div`
     margin-right: 10%;
 `
 
+// 도시 이름 말풍선 띄우기
 const BoldWhiteText = styled.p`
     font-size: 30px;
     font-weight: bold;
     color: white;
+    cursor: pointer;
 `;
+
+const Tooltip = styled.span`
+    position: absolute;
+    background-color: #333;
+    color: #fff;
+    padding: 5px;
+    border-radius: 5px;
+    visibility: ${props => props.show ? 'visible' : 'hidden'};
+`;
+// 도시 이름 말풍선 띄우기
+
 
 // Precipitation Image
 const ImageInfo = styled.div`
@@ -117,6 +132,13 @@ export default function GoogleMap() {
     const [ todayTemp, setTodayTemp ] = useState(null);
     const [ imageType, setimageType ] = useState("precip")
     const [ currentlocation, setCurrentLocation ] = useState(null)
+    const [ clickedLocation, setClickLocation] = useState('')
+    const dispatch = useDispatch();
+
+    const handleClickLocation = (location) => {
+        console.log("Location clicked:", location);
+        dispatch(updateLocation({"city_name": location}))
+    }
     
     
 
@@ -124,8 +146,6 @@ export default function GoogleMap() {
         setimageType(type)
     } 
     
-
-
     const handleMarkerClick = (marker) => {
         try {
             setSelectedMarker(marker);
@@ -178,6 +198,29 @@ export default function GoogleMap() {
 
     const handleCloseButtonClick = () => {
         setSelectedMarker(null);
+        setimageType("precip")
+    };
+
+    // 말풍선 띄우기
+    const BoldWhiteTextWithTooltip = ({ text }) => {
+        const [showTooltip, setShowTooltip] = useState(false);
+    
+        const handleMouseEnter = () => {
+            setShowTooltip(true);
+        };
+    
+        const handleMouseLeave = () => {
+            setShowTooltip(false);
+        };
+    
+        return (
+            <div style={{ position: 'relative', display: 'inline-block' }}>
+                <BoldWhiteText onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} onClick={() => handleClickLocation(currentlocation)}>
+                    {text}
+                </BoldWhiteText>
+                <Tooltip show={showTooltip}>Add to compare cities</Tooltip>
+            </div>
+        );
     };
 
     useEffect(() => {
@@ -219,6 +262,8 @@ export default function GoogleMap() {
             });
         };
 
+
+
         // Google Maps API 스크립트를 동적으로 로드하고 initMap 함수를 window 객체에 할당
         const script = document.createElement('script');
         script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyC1aB2jdQ76fRfyg2QefEKh2bbVNinoZzo&callback=initMap`;
@@ -258,7 +303,8 @@ export default function GoogleMap() {
                                     <BoldText> Precipitation: {todayPrecip}%</BoldText>
                                 </div>
                                 <LocationInfo>
-                                    <BoldWhiteText>{currentlocation}</BoldWhiteText>
+                                    {console.log(currentlocation)}
+                                    <BoldWhiteTextWithTooltip text={currentlocation}/>
                                 </LocationInfo>
                             </TodayInfo>
                             <TypeButtonStyle>
@@ -278,12 +324,11 @@ export default function GoogleMap() {
                         </TopInfo>
                         <Icon>
                             {Object.keys(visualization).map(date => {
-                                console.log("==date: ", visualization[date]['date'])
+                                //console.log("==date: ", visualization[date]['date'])
                                 const dateInfo = visualization[date]['date'].split(' '); // 'Thu, 09 May 2024 00:00:00 GMT'를 공백을 기준으로 분할합니다.
                                 const day = dateInfo[1]; // 일 정보를 추출합니다.
                                 const month = dateInfo[2]; // 월의 줄임말을 추출합니다.
                                 const formattedDate = `${month} ${day}`; // 월과 일을 합쳐서 포맷합니다.
-                                console.log("==formattedDate", formattedDate);
 
                                 return (
                                     <button 

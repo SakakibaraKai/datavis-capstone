@@ -10,10 +10,13 @@ import { css } from '@emotion/react'
 import DataAnalysis from '../components/DataAnalysis.jsx'
 import GoogleMap from '../components/GoogleMap.jsx'
 import res from '../data/response.json';
+import graphs from '../data/graphs.json'
 // Redux
 import { useDispatch, useSelector } from 'react-redux'
 import { updateImages, selectImages } from '../redux/imagesSlice.js'
 import { updateCities, selectCities } from '../redux/citiesSlice.js'
+import { updateLocation, selectLocations, SubmitLocations } from '../redux/locationsSlice.js'
+import { selectButtons, closebutton, openbutton } from '../redux/buttonsSlice.js'
 
 const Platform = styled.div`
     width: 100%;    // 나중에 800px;
@@ -24,7 +27,7 @@ const Platform = styled.div`
 `
 const InputStyle = styled.input`
     margin-bottom: 10px;
-    width: 40vw;    // vw: 가로 너비가 줄어들게 함
+    width: 30vw;    // vw: 가로 너비가 줄어들게 함
     height: 3vh;    
     border-radius: 20px;
     text-align: center;  // 텍스트 관련요소
@@ -68,6 +71,8 @@ const Button = styled.button`
     }
 `;
 
+const validCities = ["Corvallis", "Hood River", "Gresham", "Portland", "Oregon City", "Lake Oswego", "Tigard", "Beaverton", "Hillsboro", "Salem", "Eugene", "Bend", "Roseburg", "Grants Pass"];
+
 export default function CreateTable() {
     // cityName1 AND cityName2
     const [ cityName1, setCityName1 ] = useState("")
@@ -79,54 +84,99 @@ export default function CreateTable() {
     const [ error, setError ] = useState(null);
     const [ isfetched, setIsfetched ] = useState(false);
     const [ humidity_img, setHumidityImage ] = useState("")
-    const [ temp_max_img, setTempMaxImage ] = useState(null)   
-    const [ pressure_img, setPressureImage ] = useState(null)
+    const [ temp_max_img, setTempMaxImage ] = useState("")
+    const [ temp_min_img, setTempMinImage ] = useState("")   
+    const [ pressure_img, setPressureImage ] = useState("")
+    const city_name = useSelector(selectLocations)
+    const updated_cityName1 = useSelector(state => state.locations.cityName1);
+    const updated_cityName2 = useSelector(state => state.locations.cityName2);
+    const buttonCondition = useSelector(selectButtons); // closeCondition을 상태 값으로 가져옵니다.
 
     // redux dispatch: 특정 액션, 이벤트를 전송한다라는 의미 
     const dispatch = useDispatch();
     const graphlist = useSelector(selectImages)
 
+
+    console.log("==", buttonCondition.condition); // condition 값 확인
+    
+    const handleCityNameChange = (e) => {
+        const value = e.target.value;
+        setCityName1(value);
+    }
+    
+
+    const handleInputComplete1 = () => {
+        dispatch(updateLocation({ city_name: cityName2 }));
+    }
+
+    const handleInputComplete2 = () => {
+        dispatch(updateLocation({ city_name: cityName2 }));
+    }
+    
+
+
     const handleSubmit = async (e) => {
-        setLoading(true)
-        setIsfetched(false)
         const controller = new AbortController();
         // cityName1 이 빈 배열 || (compareCity 가 참이고 동시에 cityName2가 빈 배열)
         if (!cityName1 || !cityName2) {
-            console.error('Please Provide city name');
+            alert('Please Provide city names');
             return
         }
 
+        //  경고 이름 띄우기
+        if (!validCities.includes(cityName1))
+        {
+            alert("Please enter one of the valid cities: Corvallis, Hood River, Gresham, Portland, Oregon City, Lake Oswego, Tigard, Beaverton, Hillsboro, Salem, Eugene, Bend, Roseburg, Grants Pass");
+            setCityName1("")
+            return
+        } else if (!validCities.includes(cityName2)){
+            alert("Please enter one of the valid cities: Corvallis, Hood River, Gresham, Portland, Oregon City, Lake Oswego, Tigard, Beaverton, Hillsboro, Salem, Eugene, Bend, Roseburg, Grants Pass");
+            setCityName2("")
+            return
+        }
+
+        setLoading(true)
+        setIsfetched(false)
+        dispatch(openbutton())
         // cityName1 추가
         setFormData({
             city_name1: cityName1,
             city_name2: cityName2
         })
 
+        dispatch(SubmitLocations({"city_name1": cityName2, "city_name2": cityName2}))
         try {
-            const response = await fetch('http://localhost:8080/create', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(formData),
-                signal: controller.signal
-            });
-            const data = await response.json();
+            // const response = await fetch('http://localhost:8080/create', {
+            //     method: 'POST',
+            //     headers: {
+            //         'Content-Type': 'application/json',
+            //     },
+            //     body: JSON.stringify(formData),
+            //     signal: controller.signal
+            // });
+            // const data = await response.json();
+            const data = graphs
+            //console.log("==Graphs: ", graphs)
             setVisualization(data)
             if (visualization) {
                 // 이미지 데이터를 바로 사용하기
-                const HumidityImageUrl = `data:image/png;base64,${visualization['humidity_image']}`;
+                const HumidityImageUrl = `data:image/png;base64,${visualization['humidity_img']}`;
                 setHumidityImage(HumidityImageUrl);
                 // 다른 이미지도 동일한 방법으로 처리
-                const tempMaxImageUrl = `data:image/png;base64,${visualization['max_temp_image']}`;
+                const tempMaxImageUrl = `data:image/png;base64,${visualization['max_temp_img']}`;
                 setTempMaxImage(tempMaxImageUrl);
 
-                const pressureImageUrl = `data:image/png;base64,${visualization['pressure_image']}`;
+                const tempMinImageUrl = `data:image/png;base64,${visualization['min_temp_img']}`;
+                setTempMinImage(tempMinImageUrl);
+
+                const pressureImageUrl = `data:image/png;base64,${visualization['pressure_img']}`;
                 setPressureImage(pressureImageUrl);
                 dispatch(updateImages({
-                    "humidity_image": visualization['humidity_image'],
-                    "max_temp_image": visualization['max_temp_image'] ,
-                    "pressure_image": visualization['pressure_image']
+                    "humidity_image": visualization['humidity_img'],
+                    "max_temp_image": visualization['max_temp_img'],
+                    "min_temp_image": visualization['min_temp_img'],
+                    "pressure_image": visualization['pressure_img'],
+                    
                 }))
             }
 
@@ -149,13 +199,9 @@ export default function CreateTable() {
                 signal: controller.signal
             })
             */
-                       
             //console.log("== response: ", response['cities_info'])
             //const res = await response.json();
-            console.log("==res: ", res)
-            console.log("res[0]:", res['cities_info'][0])
             for(let i = 0; i < res['cities_info'].length; i++) {
-                console.log("==city name: ", res['cities_info'][i]['city_name'])
                 dispatch(updateCities(res['cities_info'][i]))
             }
         }catch(error) {
@@ -164,11 +210,18 @@ export default function CreateTable() {
         }finally {
             
         }
-
-
     }
-    
 
+    // cityName1이 변경될 때마다 실행되는 효과
+    useEffect(() => {
+        // cityName1이 변경될 때 수행할 작업을 여기에 추가합니다.
+        console.log('cityName1이 변경되었습니다:', updated_cityName1);
+        // 예시: cityName1이 변경될 때마다 someState를 업데이트합니다.
+        setCityName1(updated_cityName1);
+        setCityName2(updated_cityName2);
+    }, [updated_cityName1, updated_cityName2]); // cityName1 변수를 의존성 배열에 포함시켜 변경될 때마다 useEffect가 실행되도록 합니다.
+
+    
 
     return (
         <Platform>
@@ -179,8 +232,18 @@ export default function CreateTable() {
             })}>
                 <SearchCity>       
                     <CityBox>
-                        <InputStyle value={cityName1} placeholder = "City Name 1" onChange = {e => {setCityName1(e.target.value)}} />
-                        <InputStyle value={cityName2} placeholder = "City Name 2" onChange = {e => {setCityName2(e.target.value)}} />
+                        <InputStyle 
+                            value={cityName1} 
+                            placeholder="City Name 1" 
+                            onChange = {e => {setCityName1(e.target.value)}}
+                            onBlur={handleInputComplete1} // 입력이 완료될 때 호출됩니다.
+                        />
+                        <InputStyle 
+                            value={cityName2} 
+                            placeholder="City Name 2" 
+                            onChange = {e => {setCityName2(e.target.value)}}
+                            onBlur={handleInputComplete2} // 입력이 완료될 때 호출됩니다.
+                        />
                     </CityBox>
                     <Button type = "submit" onClick={handleSubmit}> Compare</Button>
                     <Button type = "submit" onClick={handleUpdate}> Update</Button>
@@ -190,7 +253,8 @@ export default function CreateTable() {
                 {error && <ErrorContainer />}
                 {loading && <Spinner />}
             </Loading>
-            {isfetched ? <DataAnalysis /> : <GoogleMap />}
+            <GoogleMap />
+            {buttonCondition.condition && <DataAnalysis />}
             {/*isfetched &&<DataAnalysis />*/}
 
         </Platform> 
