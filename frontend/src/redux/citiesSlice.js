@@ -3,6 +3,15 @@
 
 import { createSlice } from  '@reduxjs/toolkit'
 
+export const fetchCities = createAsyncThunk(
+    'cities/fetchCities',
+    async () => {
+        const response = await fetch('http://host.docker.internal:8080/update-table')
+        const data = await response.json()
+        return data
+    }
+)
+
 const citiesSlice = createSlice({
     name: "cities",
     initialState: {

@@ -8,8 +8,6 @@ import { Provider } from 'react-redux'
 import store from './redux/store'
 import Login from './pages/Login'
 import './index.css'
-import DisplayTable from './pages/DisplayTable'
-import FetchSearch from './pages/FetchSearch'
 import CreateTable from './pages/CreateTable'
 import People from './pages/PeoplePage'
 
@@ -30,12 +28,6 @@ const router = createBrowserRouter([
                 ]
             },
             { 
-                path: "fetchapi", 
-                element: <FetchSearch />,
-                children: [
-                ] 
-            },
-            { 
                 path: "/login", 
                 element: <Login />,
                 children: [
@@ -44,12 +36,6 @@ const router = createBrowserRouter([
             {   
                 path:"insert",
                 element: <CreateTable />,
-                children: [
-                ]
-            },
-            {   
-                path:"display",
-                element: <DisplayTable />,
                 children: [
                 ]
             },
