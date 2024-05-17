@@ -16,7 +16,7 @@ export default function DisplayTable() {
 
     async function sendGet() {
         const res = await fetch(
-            "http://localhost:8080/tablelist",
+            "http://host.docker.internal:8080/tablelist",
             {
                 method: "GET",
                 headers: {"Accept": "application/json"},
@@ -31,7 +31,7 @@ export default function DisplayTable() {
         const table = {"table_name": selectedTable}
         console.log("== table", table)
         const res = await fetch(
-            "http://localhost:8080/get-table",
+            "http://host.docker.internal:8080/get-table",
             {
                 method: "POST",
                 headers: {"Content-Type": "application/json"},

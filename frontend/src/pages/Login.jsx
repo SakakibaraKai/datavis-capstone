@@ -25,7 +25,7 @@ const Login = () => {
     const handleChange = (e) => {
         setFormData({...formData, [e.target.name]: e.target.value})
     }
-
+``
     const handleNewUserChange = (e) => {
         setNewUser(prevUserData => {
 
@@ -45,7 +45,7 @@ const Login = () => {
         e.preventDefault()
         newUser.is_admin = newUser.is_admin ? 1 : 0
 
-        fetch("http://localhost:8080/register", {
+        fetch("http://host.docker.internal:8080/register", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -71,7 +71,7 @@ const Login = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault()
-        fetch("http://localhost:8080/login", {
+        fetch("http://host.docker.internal:8080/login", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"

@@ -37,6 +37,7 @@ export function Root () {
                     {/*loggedIn && <li><NavLink to="/insert" onClick={() => handleNavLinkClick("CreateTable", 3)} activeClassName="active">Platform</NavLink></li> */} 
                     <li><NavLink exact to="/" onClick={() => handlemainClick()}>Product</NavLink></li>
                     <li><NavLink to="/people" onClick={() => handleNavLinkClick("People", 1)} activeClassName="active">People</NavLink></li> 
+                    <li><NavLink to="/Resources" onClick={() => handleNavLinkClick("Resources", 2)} activeClassName="active">Resources</NavLink></li> 
                     <li><NavLink to="/insert" onClick={() => handleNavLinkClick("CreateTable", 3)} activeClassName="active">Platform</NavLink></li>
                 </ul>
             </nav>
@@ -102,7 +103,7 @@ export function LandingPage() {
                 <img src="/BigDataIntro.jpg" alt="BigDataImage" style={{ width: '100%', height: 'auto', margin: '10px' }} />
                 <div style ={{width: "100%"}}>
                     <h2>Features</h2>
-                    <img src="/Feature1.jpg" alt="Feature1" style={{ width: '100%', height: 'auto' }}/>
+                    <img src="/Feature2.jpg" alt="Feature1" style={{ width: '100%', height: 'auto' }}/>
                 </div>
             </div>
             {/* 설명이 있는 곳 */}
@@ -110,9 +111,9 @@ export function LandingPage() {
                 <div style ={{width: "100%"}}>
                     <h2>Product</h2>
                     <ul style={{listStyleType: 'disc'}}>
-                        <li style = {{margin: "5px", padding: "3px"}}>We develop our own customized visualization weather platform</li>
-                        <li style = {{margin: "5px", padding: "3px"}}>We use the latest weather information to keep our customers updated</li>
-                        <li style = {{margin: "5px", padding: "3px"}}>We import Google Map to maintain the familiar experience for customers</li>
+                        <li style = {{margin: "5px", padding: "1px"}}>We develop our own customized visualization weather platform</li>
+                        <li style = {{margin: "5px", padding: "1px"}}>We use the latest weather information to keep our customers updated</li>
+                        <li style = {{margin: "5px", padding: "1px"}}>We import Google Map to maintain the familiar experience for customers</li>
                     </ul>
                 </div>
                 <div style ={{width: "100%"}}>
@@ -123,9 +124,53 @@ export function LandingPage() {
                     <h2>Who Can Use ?</h2>
                     <p>Targeted at all ages, our platform does not single out customers.</p>
                 </div>
-
+                <div>
+                    <img src="/Feature1.png" alt="Feature1" style={{ width: '100%', height: 'auto', padding: "10px"}}/>
+                </div>
         </div>
     </div>
+    );
+}
+
+export function Resources() { 
+
+    return (
+        <div style={{ display: "flex", height: "100%", width: "100%", justifyContent: "space-between" }}>
+            {/* 이미지가 있는 곳 */}
+            <div style={{ height: "100%", width: "50%", marginRight: "10px" }}>
+                <div style ={{width: "100%"}}>
+                    <h2>Download</h2>
+                    <p>To be updated later - Currently, we are working on CI/CD after integrating Kubernetes. We will mention the new URL that will be updated.</p>
+                    <img src="/BigDataIntro.jpg" alt="BigDataImage" style={{ width: '100%', height: 'auto', margin: '10px' }} />
+                </div>
+                <div style ={{width: "100%"}}>
+                    <h2>Tutorial</h2>
+                    <img src="/Feature2.jpg" alt="Feature1" style={{ width: '100%', height: 'auto' }}/>
+                </div>
+            </div>
+            {/* 설명이 있는 곳 */}
+            <div style={{height: "100%", width: "50%",marginLeft: "10px", padding: "10px", boxSizing: "border-box" }}>
+                <div style ={{width: "100%"}}>
+                    <h2>Product</h2>
+                    <ul style={{listStyleType: 'disc'}}>
+                        <li style = {{margin: "5px", padding: "1px"}}>We develop our own customized visualization weather platform</li>
+                        <li style = {{margin: "5px", padding: "1px"}}>We use the latest weather information to keep our customers updated</li>
+                        <li style = {{margin: "5px", padding: "1px"}}>We import Google Map to maintain the familiar experience for customers</li>
+                    </ul>
+                </div>
+                <div style ={{width: "100%"}}>
+                    <h2>Why Weather Platform ?</h2>
+                    <p>Google Weather does not provide visual weather comparisons between two locations. We use the data provided to not only provide Oregon users with up-to-date data, but we also include a variety of visuals. For your convenience, we imported Google Maps and placed markers in Oregon.</p>
+                </div>
+                <div style ={{width: "100%"}}>
+                    <h2>Who Can Use ?</h2>
+                    <p>Targeted at all ages, our platform does not single out customers.</p>
+                </div>
+                <div>
+                    <img src="/Feature1.png" alt="Feature1" style={{ width: '100%', height: 'auto', padding: "10px"}}/>
+                </div>
+            </div>
+        </div>
     );
 }
 

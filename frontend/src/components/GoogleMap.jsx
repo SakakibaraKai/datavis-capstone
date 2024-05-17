@@ -53,7 +53,7 @@ const TypeButtonStyle = styled.div`
 `
 const BoldText = styled.p`
     font-weight: bold; /* 볼드체로 설정 */
-    text-align: left
+    text-align: left;
 `;
 
 const LocationInfo = styled.div`
@@ -130,9 +130,9 @@ export default function GoogleMap() {
     const [ todayPrecip, setTodayPrecip ] = useState(null);
     const [ todayDate, setTodatDate ] = useState(null);
     const [ todayTemp, setTodayTemp ] = useState(null);
-    const [ imageType, setimageType ] = useState("precip")
-    const [ currentlocation, setCurrentLocation ] = useState(null)
-    const [ clickedLocation, setClickLocation] = useState('')
+    const [ imageType, setimageType ] = useState("precip");
+    const [ currentlocation, setCurrentLocation ] = useState(null);
+    const [ clickedLocation, setClickLocation] = useState('');
     const dispatch = useDispatch();
 
     const handleClickLocation = (location) => {
@@ -146,17 +146,17 @@ export default function GoogleMap() {
         setimageType(type)
     } 
     
-    const handleMarkerClick = (marker) => {
+    const handleMarkerClick = async (marker) => {
         try {
             setSelectedMarker(marker);
-            //const response = await fetch('http://localhost:8080/rain', {
-            //     method: 'POST',
-            //     headers: {
-            //         'Content-Type': 'application/json',
-            //     },
-            //     body: JSON.stringify(marker),
-            //     signal: controller.signal
-            // });
+            const response = await fetch('http://host.docker.internal:8080/rain', {
+                 method: 'POST',
+                 headers: {
+                     'Content-Type': 'application/json',
+                 },
+                 body: JSON.stringify(marker),
+                 signal: controller.signal
+             });
             // 이미지 정보를 처리하고 visualization 상태에 저장하는 코드
             setCurrentLocation(marker['cityName'])
             let i = 0
