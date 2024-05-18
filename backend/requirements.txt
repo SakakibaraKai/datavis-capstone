@@ -11,3 +11,4 @@ cryptography
 jupyter
 mysql-connector-python
 folium
+pyjwt

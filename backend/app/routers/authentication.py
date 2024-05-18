@@ -2,7 +2,7 @@ import jwt
 import bcrypt
 import os
 from dotenv import load_dotenv
-from jwt.exceptions import InvalidSignatureError
+from jwt.exceptions import InvalidTokenError, ExpiredSignatureError, DecodeError
 from functools import wraps
 import requests
 from .sqlsetup import execute_query
@@ -17,8 +17,14 @@ def validateToken(token : str):
     try:
         payload = jwt.decode(token, "token_secret", algorithms=["HS256"]) 
         return False, payload
-    except InvalidSignatureError as e:
+    except ExpiredSignatureError:
+        return True, "The token has expired."
+    except DecodeError:
+        return True, "The token is improperly formed."
+    except InvalidTokenError:
         return True, "Invalid Token"
+    except Exception as e:
+        return True, f"An unexpected error occurred: {str(e)}"
 
     
 def createToken(id, name, adminstatus):
