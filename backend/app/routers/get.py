@@ -2,15 +2,9 @@ from flask import Blueprint, request, Flask, jsonify, make_response, session, se
 from .authentication import isAuthorized, isAuthorizedAdmin
 from typing import Optional
 import requests
-import json
-import pymysql
-import bcrypt
 from pymysql import err
 #from .sqlsetup import execute_query
-import uuid
 import mysql.connector
-import datetime
-import urllib.parse
 from .post import create_table, openAPI_info
 
 jupyter_note_url = "http://127.0.0.1:8000/drawtable"
@@ -31,14 +25,7 @@ conn = mysql.connector.connect(
 )
 
 bp = Blueprint('/gets', __name__)
-
-
-
 cities = ['Corvallis', 'Salem', 'Portland', 'Eugene', 'Bend', 'Beaverton', 'Hillsboro', 'Gresham', 'Lake Oswego', 'Tigard', 'Grants Pass', 'Oregon City', 'Roseburg', 'Hood River']
-
-# 모든 도시 이름에 'OR'을 붙이기
-#cities = [city + ', OR' for city in cities]
-
 
 @bp.route('/', methods = ['GET'])
 def root():

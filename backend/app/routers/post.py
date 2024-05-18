@@ -2,17 +2,12 @@ from flask import Blueprint, request, Flask, jsonify, make_response, session
 from typing import Optional
 import requests
 import json
-import pymysql
-import bcrypt
 from pymysql import err
 from .sqlsetup import execute_query
-import uuid
 import mysql.connector
 from .authentication import createToken, validateToken, validatePassword, hashPassword, isAuthorized, isAuthorizedAdmin
 from math import radians, sin, cos, sqrt, atan2
 from concurrent.futures import ProcessPoolExecutor
-from .heatmap import get_points, distance_from_A_B, Over_Standard
-import base64
 from functools import wraps
 
 session = requests.session()
@@ -106,8 +101,6 @@ def create_table(city_name, city_info):
     col6 = "pressure"
     col7 = "humidity"
     col8 = "description"
-    #col8 = "s"
-    #col9 = "s"
     try:
         with conn.cursor() as cursor:
             # DB selection
@@ -172,19 +165,6 @@ def get_table(city_name1, city_name2):
     response = requests.post(table_url, json=data, verify = False)
     return response.content
 
-def get_heatmap(city_name1, city_name2):
-    lat_1, lon_1 = get_lat_lon(city_name1)
-    lat_2, lon_2 = get_lat_lon(city_name2)
-    #center_lat = (lat_1 + lat_2) / 2
-    #center_lon = (lon_1 + lon_2) / 2
-    
-    
-    temp_data = openAPI_precip(get_points(lat_1, lon_1, lat_2, lon_2, distance_from_A_B(lat_1, lon_1, lat_2, lon_2)))
-    data = {"precip": temp_data}
-    print("==data: ", data)
-    response = requests.post(heatmap_url, json=data, verify = False)
-    return response.content
-
 # 리스트 형식으로 반환
 def get_lat_lon(city_name):
     url = f"https://api.openweathermap.org/geo/1.0/direct?q={city_name}&limit=1&appid={api_key}"
@@ -238,13 +218,6 @@ def create_graphs():
         content = request.get_json()
         city_name1 = content['city_name1']
         city_name2 = content['city_name2']
-        
-        #city_info1 = openAPI_info(city_name1)
-        #city_info2 = openAPI_info(city_name2)
-        
-        # 두 개의 도시 테이블 생성
-        #create_table(city_name1, city_info1)
-        #create_table(city_name2, city_info2)
 
         # 그래프 얻어오기
         graphs = get_table(city_name1, city_name2)
@@ -258,8 +231,6 @@ def create_graphs():
             # 각 이미지의 ID를 사용하여 쿼리 실행하여 이미지 데이터 가져오기
             cursor.execute(f"SELECT max_temp_img, min_temp_img, humidity_img, pressure_img FROM images WHERE id = %s", (image_id,))
             image_data = cursor.fetchall()
-            #print(humidity_image_data)
-            #print(pressure_image_data)
         
             image = {
                 "max_temp_img": image_data[0][0],
@@ -277,14 +248,7 @@ def create_charts():
         response = requests.post(pychart_url, json=content, verify = False)
         data = response.json()
         return data
-'''
-{
-    "cityName": "Beaverton",
-    "position": [45.4872, -122.8038]    
-}
-
-    '''    
-        
+    
 @bp.route('/rain', methods= ['POST'])
 def precip_graphs():
     if request.method == 'POST':
