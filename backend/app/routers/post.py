@@ -24,6 +24,7 @@ table_url = "http://localhost:8000/drawtable"
 heatmap_url = "http://localhost:8000/drawheatmap"
 precip_url = "http://localhost:8000/drawprecip"
 pychart_url = "http://localhost:8000/drawpychart"
+hurl = "http://172.17.0.2:8000/drawtable"
 
 # 연결에 필요한 정보
 rds_host = 'capstone-database.c5ys4ks8sbyz.us-west-2.rds.amazonaws.com'
@@ -162,7 +163,7 @@ def check_table():
 
 def get_table(city_name1, city_name2):
     data = {"city_name1": city_name1, "city_name2": city_name2}
-    response = requests.post(table_url, json=data, verify = False)
+    response = requests.post(drawtable_url, json=data, verify = False)
     return response.content
 
 # 리스트 형식으로 반환
@@ -224,14 +225,15 @@ def create_graphs():
         # graphs를 문자열로 디코딩하여 JSON 객체로 변환
         graphs_json = graphs.decode('utf-8')
         res = json.loads(graphs_json)
-
+        print(res["id"])
         image_id = res["id"]
         with conn.cursor() as cursor:
             cursor.execute(f"USE {rds_database}")
             # 각 이미지의 ID를 사용하여 쿼리 실행하여 이미지 데이터 가져오기
             cursor.execute(f"SELECT max_temp_img, min_temp_img, humidity_img, pressure_img FROM images WHERE id = %s", (image_id,))
             image_data = cursor.fetchall()
-        
+
+            
             image = {
                 "max_temp_img": image_data[0][0],
                 "min_temp_img": image_data[0][1],
@@ -241,19 +243,11 @@ def create_graphs():
 
             return jsonify(image)
         
-@bp.route('/draw-chart', methods= ['POST'])
-def create_charts():
-    if request.method == 'POST':
-        content = request.get_json()
-        response = requests.post(pychart_url, json=content, verify = False)
-        data = response.json()
-        return data
-    
 @bp.route('/rain', methods= ['POST'])
 def precip_graphs():
     if request.method == 'POST':
         content = request.get_json()
-        response = requests.post(precip_url, json=content, verify = False)
+        response = requests.post(drawprecip_url, json=content, verify = False)
         res_data = response.json()
         print(res_data)
         res_data_ids_str = ', '.join(map(str, res_data['ids']))
