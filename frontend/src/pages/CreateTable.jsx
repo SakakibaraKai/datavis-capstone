@@ -192,7 +192,6 @@ export default function CreateTable() {
     const handleUpdate = async (e) => {
         const controller = new AbortController();
         try {
-            
             const response = await fetch('http://host.docker.internal:8080/update-table', {
             //const response = await fetch('../data/response.json', {
                 method: 'GET',

@@ -1,7 +1,7 @@
 // it means to choose the part of states from all states.
 // 슬라이스는 전체 상태에서 부분 상태를 선택하는 것이기 때문에 'slice'라고 이름 붙여졌다
 
-import { createSlice } from  '@reduxjs/toolkit'
+import { createSlice, createAsyncThunk } from  '@reduxjs/toolkit'
 
 export const fetchCities = createAsyncThunk(
     'cities/fetchCities',
