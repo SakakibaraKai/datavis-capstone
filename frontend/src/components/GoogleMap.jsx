@@ -133,6 +133,7 @@ export default function GoogleMap() {
     const [ imageType, setimageType ] = useState("precip");
     const [ currentlocation, setCurrentLocation ] = useState(null);
     const [ clickedLocation, setClickLocation] = useState('');
+    const [loading, setLoading] = useState(true);
     const dispatch = useDispatch();
 
     const handleClickLocation = (location) => {
@@ -147,8 +148,8 @@ export default function GoogleMap() {
     } 
     
     const handleMarkerClick = async (marker) => {
+        setLoading(true);
         try {
-
             setSelectedMarker(marker);
             const controller = new AbortController();
             const response = await fetch('http://localhost:8080/rain', {
@@ -195,6 +196,7 @@ export default function GoogleMap() {
         } catch(error) {
             console.error("fetch request error", error) 
         } finally {
+            setLoading(false);
         }
     };
     
@@ -295,7 +297,7 @@ export default function GoogleMap() {
     return (
         // 이 DIV는 구글 맵을 보여준다
         <div id="map" style={{ width: '100%', height: '100%' }}>
-            {selectedMarker && (
+            {selectedMarker && !loading && (
                 // 검은색 바탕화면을 보여준다
                 <MarkerInfoContainer>
                     {/* 버튼 왼쪽에 배치  위쪽 모든 칸 차지*/}
