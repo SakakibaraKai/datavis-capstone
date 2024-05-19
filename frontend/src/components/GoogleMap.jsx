@@ -148,8 +148,10 @@ export default function GoogleMap() {
     
     const handleMarkerClick = async (marker) => {
         try {
+
             setSelectedMarker(marker);
-            const response = await fetch('http://host.docker.internal:8080/rain', {
+            const controller = new AbortController();
+            const response = await fetch('http://localhost:8080/rain', {
                  method: 'POST',
                  headers: {
                      'Content-Type': 'application/json',
@@ -159,6 +161,7 @@ export default function GoogleMap() {
              });
             // 이미지 정보를 처리하고 visualization 상태에 저장하는 코드
             setCurrentLocation(marker['cityName'])
+            const res = await response.json()
             let i = 0
             const newVisualization = {};
             for (let key in res) {
@@ -226,16 +229,26 @@ export default function GoogleMap() {
     useEffect(() => {
         // cities가 변경될 때마다 마커를 업데이트합니다.
         const newMarkers = [];
+
+        // cities_info 객체의 키를 필터링하여 null이 아닌 도시만 선택합니다.
         const cityNames = Object.keys(cities).filter(cityName => cities[cityName] !== null);
+
         cityNames.forEach(cityName => {
             const cityInfo = cities[cityName];
-            const lat = cityInfo['city']['coord']['lat'];
-            const lon = cityInfo['city']['coord']['lon'];
-            newMarkers.push({
-                cityName: cityName,
-                position: [lat, lon]
-            });
+            // cityInfo가 null이 아니고, lat과 lon이 존재하는지 확인합니다.
+            if (cityInfo && cityInfo.lat !== null && cityInfo.lon !== null) {
+                const lat = cityInfo.lat;
+                const lon = cityInfo.lon;
+                console.log("City:", cityName, "Lat:", lat, "Lon:", lon);
+                newMarkers.push({
+                    cityName: cityName,
+                    position: [lat, lon]
+                });
+            } else {
+                console.warn(`Invalid or missing data for ${cityName}`);
+            }
         });
+
         setMarkers(newMarkers);
     }, [cities]);
 

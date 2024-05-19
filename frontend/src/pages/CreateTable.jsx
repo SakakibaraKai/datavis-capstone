@@ -198,9 +198,15 @@ export default function CreateTable() {
                 signal: controller.signal
             })
             const res = await response.json();
-            console.log("== response: ", res)
-            for(let i = 0; i < res['cities_info'].length; i++) {
-                dispatch(updateCities(res['cities_info'][i]))
+            const cityInfo = res['cities_info']
+            for (const cityName in cityInfo) {
+                if (cityInfo.hasOwnProperty(cityName)) {
+                    
+                    const cityData = cityInfo[cityName];
+                    console.log("==c",cityName); // 각 도시의 데이터 확인
+                    console.log(cityData); // 각 도시의 데이터 확인
+                    dispatch(updateCities({ city_name: cityName, city_location: cityData })); // 도시 데이터 업데이트
+                }
             }
         }catch(error) {
             console.error("Update error", error);

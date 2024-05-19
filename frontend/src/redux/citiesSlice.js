@@ -33,11 +33,12 @@ const citiesSlice = createSlice({
     reducers: {
         updateCities(state, action) {
             const city_info = action.payload;
-            const city_name = city_info['city_name']
+            const city_name = city_info.city_name;
+            const city_location = city_info.city_location;
             
             return {
                 ...state,
-                [city_name]: city_info // 해당 도시 이름을 키로 사용하여 city_info를 저장
+                [city_name]: city_location // 해당 도시 이름을 키로 사용하여 city_info를 저장
             };
         }
     }
