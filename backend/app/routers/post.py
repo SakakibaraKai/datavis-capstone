@@ -246,14 +246,9 @@ def create_graphs():
 @bp.route('/rain', methods= ['POST'])
 def precip_graphs():
     if request.method == 'POST':
-        
-        with open('./res.json', 'r') as file:
-            data = json.load(file)
-            return jsonify(data)
         content = request.get_json()
         response = requests.post(drawprecip_url, json=content, verify = False)
         res_data = response.json()
-        print(res_data)
         res_data_ids_str = ', '.join(map(str, res_data['ids']))
         
         image_data_dict = {}
