@@ -33,8 +33,8 @@ export function Root () {
                     <li><NavLink to="/login" onClick={() => handleNavLinkClick("login", 4)} activeclassname="active">{loggedIn ? "Profile" : "Login"}</NavLink></li>
                     <li><NavLink to="/" onClick={() => handlemainClick()}>Product</NavLink></li>
                     <li><NavLink to="/people" onClick={() => handleNavLinkClick("People", 1)} activeslassname="active">People</NavLink></li>
-                    {loggedIn && <li><NavLink to="/Resources" onClick={() => handleNavLinkClick("Resources", 2)} activeclassname="active">Resources</NavLink></li> } 
-                    {loggedIn && <li><NavLink to="/insert" onClick={() => handleNavLinkClick("CreateTable", 3)} activeclassname="active">Platform</NavLink></li> }
+                    <li><NavLink to="/Resources" onClick={() => handleNavLinkClick("Resources", 2)} activeclassname="active">Resources</NavLink></li> 
+                    <li><NavLink to="/insert" onClick={() => handleNavLinkClick("CreateTable", 3)} activeclassname="active">Platform</NavLink></li>
                 </ul>
             </nav>
             <main style={{height: '100%', width: '80%'}}>

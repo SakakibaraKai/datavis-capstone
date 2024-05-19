@@ -146,7 +146,7 @@ export default function CreateTable() {
 
         dispatch(SubmitLocations({"city_name1": cityName2, "city_name2": cityName2}))
         try {
-            const response = await fetch('http://host.docker.internal:8080/create', {
+            const response = await fetch('http://localhost:8080/create', {
                 method: 'POST',
                 headers: {
                 'Content-Type': 'application/json',
@@ -192,13 +192,13 @@ export default function CreateTable() {
     const handleUpdate = async (e) => {
         const controller = new AbortController();
         try {
-            const response = await fetch('http://host.docker.internal:8080/update-table', {
+            const response = await fetch('http://localhost:8080/update-table', {
             //const response = await fetch('../data/response.json', {
                 method: 'GET',
                 signal: controller.signal
             })
             const res = await response.json();
-            //console.log("== response: ", response['cities_info'])
+            console.log("== response: ", res)
             for(let i = 0; i < res['cities_info'].length; i++) {
                 dispatch(updateCities(res['cities_info'][i]))
             }

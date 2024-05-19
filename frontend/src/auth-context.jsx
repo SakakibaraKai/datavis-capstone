@@ -15,7 +15,7 @@ export const AuthProvider = ({ children }) => {
     }, []);
 
     const validateToken = (token) => {
-        fetch("http://host.docker.internal:8080/validate", {
+        fetch("http://localhost:8080/validate", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

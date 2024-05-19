@@ -52,7 +52,7 @@ const Login = () => {
 
         newUser.is_admin = newUser.is_admin ? 1 : 0
 
-        fetch("http://host.docker.internal:8080/register", {
+        fetch("http://localhost:8080/register", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -83,7 +83,7 @@ const Login = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault()
-        fetch("http://host.docker.internal:8080/login", {
+        fetch("http://localhost:8080/login", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
