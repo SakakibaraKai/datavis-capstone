@@ -10,6 +10,10 @@ html, body {
   color: red;
 }
 
+.success {
+  color: #4BB543;
+}
+
 nav {
   height: 100%;
   margin-right: 32px;

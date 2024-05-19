@@ -1,35 +1,41 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 
 export const AuthContext = createContext(null);
 
 
 export const AuthProvider = ({ children }) => {
 
-    const checkTokenValidity = () => { 
+    const [loggedIn, setLoggedIn] = useState(false);
+
+    useEffect(() => {
         const token = localStorage.getItem('token');
-        if (!token) {
-            return false;
+        if (token) {
+            validateToken(token);
         }
+    }, []);
+
+    const validateToken = (token) => {
         fetch("http://host.docker.internal:8080/validate", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${token}`
             },
-        }).then(response => {
+        })
+        .then(response => {
             if (response.ok) {
-                return true;
+                setLoggedIn(true);
+                console.log("Token is valid");
             } else {
-                return false;
+                setLoggedIn(false);
+                console.log("Token is invalid");
             }
         })
         .catch(error => {
-            return false;
+            console.log("Error validating token:", error);
+            setLoggedIn(false);
         });
-
-    }
-
-    const [loggedIn, setLoggedIn] = useState(checkTokenValidity());
+    };
 
 
     const status = loginStatus => {

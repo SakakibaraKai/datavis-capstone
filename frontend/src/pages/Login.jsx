@@ -7,12 +7,13 @@ import { jwtDecode } from 'jwt-decode'
 const Login = () => {
     const { loggedIn, status } = useContext(AuthContext);
     const [failure, setFailure ] = useState(false);
+    const [createfailure, setCreateFailure] = useState(false);
+    const [createSuccess, setCreateSuccess] = useState(false);
 
     const [formData, setFormData] = useState({
         "email": "",
         "password": ""
     })
-
 
     const [newUser, setNewUser] = useState({
         "name": "",
@@ -28,7 +29,6 @@ const Login = () => {
 ``
     const handleNewUserChange = (e) => {
         setNewUser(prevUserData => {
-
             return {...prevUserData,
                 [e.target.name]: e.target.type === "checkbox" ? e.target.checked : e.target.value
             }
@@ -43,6 +43,13 @@ const Login = () => {
 
     const handleNewUser = (e) => {
         e.preventDefault()
+
+        //check if the user is empty strings
+        if (newUser.name === "" || newUser.email === "" || newUser.password === "") {
+            setCreateFailure(true)
+            return
+        }
+
         newUser.is_admin = newUser.is_admin ? 1 : 0
 
         fetch("http://host.docker.internal:8080/register", {
@@ -63,9 +70,14 @@ const Login = () => {
                 "password": "",
                 "is_admin": false
             })
+            setCreateFailure(false)
+            setCreateSuccess(true)
+            setTimeout(() => {
+                setCreateSuccess(false)
+            }, 5000)
         })
         .catch(error =>  {
-            
+            setCreateFailure(true)
         })
     }
 
@@ -101,7 +113,7 @@ const Login = () => {
     if (!loggedIn) {
         return (
             <div className="login-page">
-                
+                <h1>Login</h1>
                 <form className="login-form" onSubmit={handleSubmit}>
                     <label>Email</label>
                     <input type="email" name="email" value={formData.email} onChange={handleChange} />
@@ -113,7 +125,7 @@ const Login = () => {
                 <Outlet />
             </div>
         )
-    } else {
+    } else if (loggedIn){
         const user = jwtDecode(localStorage.getItem("token"))
         return (
             <div className="login-page">
@@ -130,6 +142,8 @@ const Login = () => {
                         <input type="password" name="password" value={newUser.password} onChange={handleNewUserChange} />
                         <label>Admin Privilege</label>
                         <input type="checkbox" name="is_admin" checked={newUser.is_admin} onChange={handleNewUserChange} />
+                        {createfailure && <label className="failure">Failed to create user!</label>}
+                        {createSuccess && <label className="success">Success!</label>}
                         <button>Create User</button>
                     </form>
                 </div>}
