@@ -1,5 +1,5 @@
 #from app.routers import post, get, delete, put
-from routers import post, get, delete, put
+from routers import post, get
 from flask import Flask, render_template, session
 from dotenv import load_dotenv, find_dotenv
 from os import environ as env

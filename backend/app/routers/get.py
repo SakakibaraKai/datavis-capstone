@@ -66,15 +66,49 @@ def show_tables():
     else:
         return jsonify({"message": "GET method not supported"})
     
-
-def return_info():
-    pass
+@bp.route('/update-database', methods = ['GET'])
+def update_cities():
+    for city in cities:
+        city_info = openAPI_info(city)
+        print(city_info["cities_info"]["city"]["coord"]["lat"])
+        lat = city_info["cities_info"]["city"]["coord"]["lat"]
+        lon = city_info["cities_info"]["city"]["coord"]["lon"]
+        
+        create_table(city, city_info, lat, lon)
     
-@bp.route('/update-table', methods = ['GET'])
-@isAuthorizedAdmin
+    return jsonify({"msg": "DataBase Updated"})
+
+
+@bp.route('/update-table', methods=['GET'])
+def tables():
+    cities_info = {}
+    with conn.cursor() as cursor:
+        for city in cities:
+            try:
+                # capstone.cities 테이블에서 위도와 경도를 선택하고 도시 이름을 조건으로 추가
+                query = "SELECT lat, lon FROM capstone.cities WHERE city_name = %s;"
+                cursor.execute(query, (city,))
+                result = cursor.fetchone()
+                print(result)
+                if result:
+                    cities_info[city] = {
+                        'lat': result[0],
+                        'lon': result[1]
+                    }
+                else:
+                    cities_info[city] = {
+                        'error': 'No data found'
+                    }
+            except Exception as e:
+                print(f"Error fetching data for {city}: {e}")
+                cities_info[city] = {
+                    'error': str(e)
+                }
+    return jsonify({"cities_info": cities_info})
+    
+@bp.route('/utable', methods = ['GET'])
 def update_tables():
     cities_info = []
-    count = 0
     for city in cities:        
         data = city_info = openAPI_info(city)
         data['city_name'] = city

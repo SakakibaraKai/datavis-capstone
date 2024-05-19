@@ -102,6 +102,8 @@ def create_table(city_name, city_info):
     col6 = "pressure"
     col7 = "humidity"
     col8 = "description"
+    col9 = "lat"
+    col10 = "lon"
     try:
         with conn.cursor() as cursor:
             # DB selection
@@ -122,6 +124,7 @@ def create_table(city_name, city_info):
             sql += ")"
 
             cursor.execute(sql)
+            
             # JSON 데이터에서 내용 추출 및 쿼리 실행
             for data in city_info['list']:
                 dt_txt = data['dt_txt']
