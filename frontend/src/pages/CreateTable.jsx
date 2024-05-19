@@ -212,7 +212,6 @@ export default function CreateTable() {
     // cityName1이 변경될 때마다 실행되는 효과
     useEffect(() => {
         // cityName1이 변경될 때 수행할 작업을 여기에 추가합니다.
-        console.log('cityName1이 변경되었습니다:', updated_cityName1);
         // 예시: cityName1이 변경될 때마다 someState를 업데이트합니다.
         setCityName1(updated_cityName1);
         setCityName2(updated_cityName2);
