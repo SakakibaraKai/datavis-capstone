@@ -1,5 +1,6 @@
 # CS 461 Capstone Project
 
+
 ## Project Overview
 This project focuses on Big Data and Cloud System Flatform. The goal of this project is that Developers will learn the basic concepts of data and framework interactions, the latest technologies in Kubernetes and CI/CD automation, while consumers will be provided with visual information with the latest weather data for the Oregon region.
 
