@@ -39,4 +39,8 @@ jobs:
         platforms: linux/amd64,linux/arm64
         push: true
         tags: depwegk/big_data_and_the_cloud:backend_latest
+        load: true  # Add this to load the built image and show logs
+        outputs: 
+          image: depwegk/big_data_and_the_cloud:backend_latest
+
       
