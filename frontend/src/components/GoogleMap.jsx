@@ -152,7 +152,7 @@ export default function GoogleMap() {
         try {
             setSelectedMarker(marker);
             const controller = new AbortController();
-            const response = await fetch('http://localhost:8080/rain', {
+            const response = await fetch('http://localhost:8080/bringgraphs', {
                  method: 'POST',
                  headers: {
                      'Content-Type': 'application/json',
