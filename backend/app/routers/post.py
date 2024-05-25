@@ -41,10 +41,30 @@ conn = mysql.connector.connect(
     database=rds_database
 )
 
-R = 6371.0
-Standard_Distance = 223
+city_images_table = {
+    "Corvallis": [],
+    "Salem": [],
+    "Portland": [],
+    "Eugene": [],
+    "Bend": [],
+    "Beaverton": [],
+    "Hillsboro": [],
+    "Gresham": [],
+    "Lake Oswego": [],
+    "Tigard": [],
+    "Grants Pass": [],
+    "Oregon City": [],
+    "Roseburg": [],
+    "Hood River": []
+}
 
-
+@bp.route('/rain', methods= ['GET'])
+def precip_graphs():
+    global city_images_table  # 전역 변수로 사용
+    response = requests.get(drawprecip_url, verify = False, timeout = 300)
+    city_images_table = response.json()
+    return city_images_table
+ 
 @bp.route('/validate', methods = ['POST'])
 @isAuthorized
 def validate():
@@ -66,7 +86,6 @@ def login():
         
     return {"error" : "Missing one or more fields!"}, 400
 
-
 @bp.route('/register', methods = ['POST'])
 @isAuthorizedAdmin
 def register():
@@ -74,7 +93,6 @@ def register():
     if "name" in user and "password" in user and "email" and "is_admin" in user:
         #encrypt password for storage
         hashed_password = hashPassword(user["password"].encode('utf-8'))
-        
         #delete password so we can send the user back
         if 'password' in user:
             del user['password']
@@ -83,15 +101,12 @@ def register():
         error, result = execute_query(
             "INSERT INTO user (email, name, password, is_admin) VALUES (%s, %s, %s, %s)" , (user['email'], user['name'], hashed_password, user['is_admin'])
         )
-
         #handle errors
         if error:
             return {"error" : result}, 400
-        
         return(user)
             
     return {"error" : "Missing one or more fields!"}, 400
-
 
 def create_table(city_name, city_info):
     col1 = "date"
@@ -150,7 +165,6 @@ def create_table(city_name, city_info):
     finally:
         return jsonify({"message": "Table successfully created"})
 
-
 @bp.route('/checktable', methods = ['GET'])
 def check_table():
     cursor = conn.cursor()
@@ -204,7 +218,7 @@ def get_precip(lat, lon):
     pop = res.json()['list'][0]['pop']
     return lat, lon, pop
 
-def openAPI_precip(li):    
+def openAPI_precip(li):
     precip = []
     with ProcessPoolExecutor(max_workers=4) as executor:
         results = executor.map(get_precip, [lat for lat, _ in li], [lon for _, lon in li])
@@ -236,33 +250,34 @@ def create_graphs():
             cursor.execute(f"SELECT max_temp_img, min_temp_img, humidity_img, pressure_img FROM images WHERE id = %s", (image_id,))
             image_data = cursor.fetchall()
 
-            
             image = {
                 "max_temp_img": image_data[0][0],
                 "min_temp_img": image_data[0][1],
                 "humidity_img": image_data[0][2],
                 "pressure_img": image_data[0][3]
             }
-
             return jsonify(image)
-        
-@bp.route('/rain', methods= ['POST'])
-def precip_graphs():
+
+
+@bp.route('/bringgraphs', methods = ['POST'])
+def bring_graphs():
     if request.method == 'POST':
         content = request.get_json()
-        response = requests.post(drawprecip_url, json=content, verify = False)
-        res_data = response.json()
-        res_data_ids_str = ', '.join(map(str, res_data['ids']))
-        
+        city_name = content['city_name']
+        table_name = f"{city_name}_images"  # 테이블 이름을 동적으로 구성
+        print(table_name)
         image_data_dict = {}
+        ids = city_images_table.get(city_name, [])
+        ids_str = ', '.join(map(str, ids))
+        print(ids)
         with conn.cursor() as cursor:
-            cursor.execute(f"USE {rds_database}")
-            # 각 이미지의 ID를 사용하여 쿼리 실행하여 이미지 데이터 가져오기
-            cursor.execute(f"SELECT id, date, image_data1, image_data2, description,precipitation, humidity, temperature FROM capstone.precip_images WHERE id IN ({res_data_ids_str})")
+            cursor.execute(f"""
+                SELECT id, date, image_data1, image_data2, description, precipitation, humidity, temperature 
+                FROM `{table_name}`
+                WHERE id IN ({ids_str})
+            """)
             results = cursor.fetchall()
-            
             for i, row in enumerate(results):
-                image_id = row[0]
                 date = row[1]
                 image_data1 = row[2]
                 image_data2 = row[3]
@@ -273,3 +288,7 @@ def precip_graphs():
                 image_data_dict[f"image_{i+1}"] = {"date": date, "description": image_description, "image_data1": image_data1, "image_data2": image_data2, "image_data" "humidity": humidity, "precipitation": precipitation, "temperature": temperature}
         
         return jsonify(image_data_dict)
+        
+@bp.route('/city-tables', methods = ['GET'])
+def city_tables():
+    return city_images_table

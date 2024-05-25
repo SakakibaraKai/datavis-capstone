@@ -66,19 +66,23 @@ def show_tables():
     else:
         return jsonify({"message": "GET method not supported"})
     
+
+# 모든 테이블을 업데이트한다.
 @bp.route('/update-database', methods = ['GET'])
 def update_cities():
     for city in cities:
         city_info = openAPI_info(city)
-        print(city_info["cities_info"]["city"]["coord"]["lat"])
-        lat = city_info["cities_info"]["city"]["coord"]["lat"]
-        lon = city_info["cities_info"]["city"]["coord"]["lon"]
         
-        create_table(city, city_info, lat, lon)
+        #print(city_info)
+        lat = city_info["city"]["coord"]["lat"]
+        lon = city_info["city"]["coord"]["lon"]
+        
+        create_table(city, city_info)
     
     return jsonify({"msg": "DataBase Updated"})
 
 
+# 업데이트 버튼을 누르면 마커를 위한 lat, lon을 보냄
 @bp.route('/update-table', methods=['GET'])
 def tables():
     cities_info = {}
@@ -116,3 +120,60 @@ def update_tables():
         cities_info.append(data)
             #return jsonify({"return": 1})
     return jsonify({"cities_info": cities_info})
+
+def create_table(city_name, city_info,):
+    col1 = "date"
+    col2 = "time"
+    col3 = "maximum_temperature"
+    col4 = "lowest_temperature"
+    col5 = "pop"
+    col6 = "pressure"
+    col7 = "humidity"
+    col8 = "description"
+    col9 = "lat"
+    col10 = "lon"
+    try:
+        with conn.cursor() as cursor:
+            # DB selection
+            cursor.execute(f"USE {rds_database}")
+            # If table exists, drop it
+            cursor.execute(f"DROP TABLE IF EXISTS `{city_name}`")
+            # table query creation
+            sql = f"CREATE TABLE IF NOT EXISTS `{city_name}` ("
+            sql += "id INT AUTO_INCREMENT PRIMARY KEY,"
+            sql += f"{col1} DATE,"
+            sql += f"{col2} TIME,"
+            sql += f"{col3} FLOAT,"
+            sql += f"{col4} FLOAT,"
+            sql += f"{col5} FLOAT,"
+            sql += f"{col6} FLOAT,"
+            sql += f"{col7} FLOAT,"
+            sql += f"{col8} TEXT"
+            sql += ")"
+
+            cursor.execute(sql)
+            
+            # JSON 데이터에서 내용 추출 및 쿼리 실행
+            for data in city_info['list']:
+                dt_txt = data['dt_txt']
+                date, time = dt_txt.split()
+                max_temp = data['main']['temp_max']
+                min_temp = data['main']['temp_min']
+                pop = data['pop']
+                pressure = data['main']['pressure']
+                humidity = data['main']['humidity']
+                description = data['weather'][0]['description']
+                #print("==",date, time, max_temp, min_temp, pop, pressure, humidity, description)
+
+                # 쿼리 작성 및 실행
+                insert_sql = f"INSERT INTO `{city_name}` ({col1}, {col2}, {col3}, {col4}, {col5}, {col6}, {col7}, {col8}) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
+                cursor.execute(insert_sql, (date, time, max_temp, min_temp, pop, pressure, humidity, description))
+                conn.commit()
+
+            print(f"Table '{city_name}' has been created successfully.")
+
+    except Exception as e:
+        # Error
+        print("Error::", e)
+    finally:
+        return jsonify({"message": "Table successfully created"})
