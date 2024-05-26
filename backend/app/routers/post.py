@@ -263,7 +263,7 @@ def create_graphs():
 def bring_graphs():
     if request.method == 'POST':
         content = request.get_json()
-        city_name = content['city_name']
+        city_name = content['cityName']
         table_name = f"{city_name}_images"  # 테이블 이름을 동적으로 구성
         print(table_name)
         image_data_dict = {}
