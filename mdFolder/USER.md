@@ -6,7 +6,7 @@
 There are two ways to install get get docker immages first method is pulling dockerimmages and second is copying the directory and then dockering each part.
 
 #### Dockerhub method
-1. Go to this website and fallow the instructions [DockerImmageRepo](https://hub.docker.com/repository/docker/depwegk/big_data_and_the_cloud/general)
+1. Go to this website and fallow the instructions [Docker Immage Repo](https://hub.docker.com/repository/docker/depwegk/big_data_and_the_cloud/general)
 
 #### Dockerizing method 2
 1. Clone this repository:
