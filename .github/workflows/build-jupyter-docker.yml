@@ -3,7 +3,7 @@ name: Docker Jupyter
 on:
   push:
     branches:
-      - main
+      - release-jupyter
       
 jobs:
   
