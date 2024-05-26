@@ -13,6 +13,11 @@ import { closebutton } from '../redux/buttonsSlice';
 import { mdiChevronLeft, mdiChevronRight } from '@mdi/js';
 import Icon from '@mdi/react';
 
+const h1Style = {
+    textAlign: 'center' // 텍스트를 중앙 정렬합니다.
+  };
+  
+
 const Visualization = styled.div`
     position: absolute;
     top: 150px;
@@ -23,7 +28,7 @@ const Visualization = styled.div`
     padding: 20px;
     color: white;
     width: 80%; /* 너비 설정 */
-    height: 65%; /* 높이 설정 */
+    height: 75%; /* 높이 설정 */
 
     display: flex;
     flex-direction: column;
@@ -68,12 +73,12 @@ export default function DataAnalysis() {
     };
 
     const prevGraph = () => {
-      setIndex(prevIndex => (prevIndex === 0 ? graphs.length - 1 : prevIndex - 1));
-  };
+        setIndex(prevIndex => (prevIndex === 0 ? graphs.length - 1 : prevIndex - 1));
+    };
 
-  const nextGraph = () => {
-      setIndex(prevIndex => (prevIndex === graphs.length - 1 ? 0 : prevIndex + 1));
-  };
+    const nextGraph = () => {
+        setIndex(prevIndex => (prevIndex === graphs.length - 1 ? 0 : prevIndex + 1));
+    };
 
     const graphslist = useSelector(selectImages)
     //const [ visualization, setVisualization ] = useState[{}] 
@@ -90,16 +95,23 @@ export default function DataAnalysis() {
     const pressureImageUrl = `data:image/png;base64,${graphslist['pressure_image']}`;
      // setPressureImage(pressureImageUrl);
 
-
     const graphs = [
       `data:image/png;base64,${graphslist['humidity_image']}`,
       `data:image/png;base64,${graphslist['max_temp_image']}`,
       `data:image/png;base64,${graphslist['min_temp_image']}`,
       `data:image/png;base64,${graphslist['pressure_image']}`
     ];
+
+    const graphs_name = [
+        "Humidity Comparison",
+        "Max Temperature Comparison",
+        "Min Temperature Comparison",
+        "Pressure Comparison"
+      ];
     return (
         <Visualization>
             <CloseButton onClick={handleCloseButtonClick}>X</CloseButton> 
+            <h1 style={h1Style}>{graphs_name[index]}</h1>
             <GraphWrapper>
                 <NavigationButton onClick={prevGraph}>
                     <Icon path={mdiChevronLeft} size={1} />

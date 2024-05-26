@@ -95,6 +95,8 @@ export default function CreateTable() {
     // redux dispatch: 특정 액션, 이벤트를 전송한다라는 의미 
     const dispatch = useDispatch();
     const graphlist = useSelector(selectImages)
+    const cities = useSelector(selectLocations)
+    console.log("==2222:", cities)
 
 
     console.log("==", buttonCondition.condition); // condition 값 확인
@@ -118,6 +120,12 @@ export default function CreateTable() {
     const handleSubmit = async (e) => {
         const controller = new AbortController();
         // cityName1 이 빈 배열 || (compareCity 가 참이고 동시에 cityName2가 빈 배열)
+        dispatch(openbutton())
+        setCityName1(cities['cityName1'])
+        setCityName2(cities['cityName2'])
+
+        dispatch(SubmitLocations({"city_name1": cityName1, "city_name2": cityName2}))
+
         if (!cityName1 || !cityName2) {
             alert('Please Provide city names');
             return
@@ -137,14 +145,12 @@ export default function CreateTable() {
 
         setLoading(true)
         setIsfetched(false)
-        dispatch(openbutton())
         // cityName1 추가
         setFormData({
             city_name1: cityName1,
             city_name2: cityName2
         })
-
-        dispatch(SubmitLocations({"city_name1": cityName2, "city_name2": cityName2}))
+        
         try {
             const response = await fetch('http://localhost:8080/create', {
                 method: 'POST',
