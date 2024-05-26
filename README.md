@@ -56,13 +56,10 @@ This project is licensed under the [License Name] License. See the `LICENSE` fil
 
 ## Contact
 If you have any questions or suggestions about the project, feel free to contact:
-- Name: [Your Name]
-- Email: [Your Email Address]
+- Name: Kai Depweg
+- Email: Depwegk@oregonstate.edu
 
 ## Additional Information
-- [Link to documentation or blog post]
-- [Link to project demo]
-- [Any other relevant information]
 - https://hub.docker.com/repository/docker/depwegk/big_data_and_the_cloud/general
 
 
