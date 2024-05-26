@@ -61,7 +61,7 @@ city_images_table = {
 @bp.route('/rain', methods= ['GET'])
 def precip_graphs():
     global city_images_table  # 전역 변수로 사용
-    response = requests.get(drawprecip_url, verify = False, timeout = 300)
+    response = requests.get(drawprecip_url, verify = False)
     city_images_table = response.json()
     return city_images_table
  
