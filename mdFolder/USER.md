@@ -22,29 +22,13 @@ There are two ways to install get get docker immages first method is pulling doc
     ```bash
     npm install
     ```
-
-### Usage
-1. You will need to docker every repo (jupyter, frontend backend) 
+4. Dockerize each branch (jupyter, frontend, backend)
     ```bash
     docker build -t <name> .
     ```
-2. Lanch every docker and go to localhost at port 5173
-## Contribution
-Contributions are welcome! To contribute, please follow these steps:
-1. Fork this repository.
-2. Create a new branch:
-    ```bash
-    git checkout -b feature/your-new-feature
-    ```
-3. Commit your changes:
-    ```bash
-    git commit -m 'Add some feature'
-    ```
-4. Push to the branch:
-    ```bash
-    git push origin feature/your-new-feature
-    ```
-5. Open a pull request.
+
+### Usage
+1. Lanch every docker and go to localhost at port 5173
 
 ## Contact
 If you have any questions or suggestions about the project, feel free to contact:
