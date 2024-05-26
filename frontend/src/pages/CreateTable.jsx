@@ -203,7 +203,6 @@ export default function CreateTable() {
                 if (cityInfo.hasOwnProperty(cityName)) {
                     
                     const cityData = cityInfo[cityName];
-                    console.log("==c",cityName); // 각 도시의 데이터 확인
                     console.log(cityData); // 각 도시의 데이터 확인
                     dispatch(updateCities({ city_name: cityName, city_location: cityData })); // 도시 데이터 업데이트
                 }

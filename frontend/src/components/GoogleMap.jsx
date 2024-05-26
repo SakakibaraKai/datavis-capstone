@@ -356,6 +356,7 @@ export default function GoogleMap() {
                                             alignItems: 'center', // 이미지와 텍스트를 수직으로 가운데 정렬합니다.
                                         }}
                                     >
+                                        {console.log(icons[visualization[date]['description']])}
                                         <img 
                                             src={`http://openweathermap.org/img/wn/${icons[visualization[date]['description']]}@2x.png`} 
                                             alt={`weather_icon_${date}`} 
