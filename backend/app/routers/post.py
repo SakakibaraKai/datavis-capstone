@@ -2,6 +2,7 @@ from flask import Blueprint, request, Flask, jsonify, make_response, session
 from typing import Optional
 import requests
 import json
+import pymysql
 from pymysql import err
 from .sqlsetup import execute_query
 import mysql.connector
@@ -9,6 +10,7 @@ from .authentication import createToken, validateToken, validatePassword, hashPa
 from math import radians, sin, cos, sqrt, atan2
 from concurrent.futures import ProcessPoolExecutor
 from functools import wraps
+import time
 
 session = requests.session()
 
@@ -57,6 +59,16 @@ city_images_table = {
     "Roseburg": [],
     "Hood River": []
 }
+
+def get_db_connection():
+    return pymysql.connect(
+        host=rds_host,
+        port=rds_port,
+        user=rds_user,
+        password=rds_password,
+        database=rds_database,
+        cursorclass=pymysql.cursors.DictCursor
+    )
 
 @bp.route('/rain', methods= ['GET'])
 def precip_graphs():
@@ -178,10 +190,6 @@ def check_table():
 
     return {"Success" : "Table was created!"}
 
-def get_table(city_name1, city_name2):
-    data = {"city_name1": city_name1, "city_name2": city_name2}
-    response = requests.post(drawtable_url, json=data, verify = False)
-    return response.content
 
 # 리스트 형식으로 반환
 def get_lat_lon(city_name):
@@ -230,6 +238,11 @@ def openAPI_precip(li):
 
     return precip
                 
+def get_table(city_name1, city_name2):
+    data = {"city_name1": city_name1, "city_name2": city_name2}
+    response = requests.post(drawtable_url, json=data, verify = False)
+    return response.content
+
 @bp.route('/create', methods= ['POST', 'GET'])
 def create_graphs():
     if request.method == 'POST':
@@ -244,20 +257,36 @@ def create_graphs():
         res = json.loads(graphs_json)
         print(res["id"])
         image_id = res["id"]
+        
+        conn = get_db_connection()
+        if conn is None:
+            return jsonify({"error": "Could not connect to the database"}), 500
+        
         with conn.cursor() as cursor:
             cursor.execute(f"USE {rds_database}")
-            # 각 이미지의 ID를 사용하여 쿼리 실행하여 이미지 데이터 가져오기
-            cursor.execute(f"SELECT max_temp_img, min_temp_img, humidity_img, pressure_img FROM images WHERE id = %s", (image_id,))
-            image_data = cursor.fetchall()
+
+            # 데이터 저장 완료 확인
+            attempts = 0
+            max_attempts = 5
+            while attempts < max_attempts:
+                cursor.execute("SELECT max_temp_img, min_temp_img, humidity_img, pressure_img FROM images WHERE id = %s", (image_id,))
+                image_data = cursor.fetchall()
+                print(f"Attempt {attempts + 1}: Fetched image data: {image_data}")
+                if image_data:
+                    break
+                time.sleep(1)
+                attempts += 1
+
+            if not image_data:
+                return jsonify({"error": "No image data found"}), 404
 
             image = {
-                "max_temp_img": image_data[0][0],
-                "min_temp_img": image_data[0][1],
-                "humidity_img": image_data[0][2],
-                "pressure_img": image_data[0][3]
+                "max_temp_img": image_data[0]['max_temp_img'],
+                "min_temp_img": image_data[0]['min_temp_img'],
+                "humidity_img": image_data[0]['humidity_img'],
+                "pressure_img": image_data[0]['pressure_img']
             }
             return jsonify(image)
-
 
 @bp.route('/bringgraphs', methods = ['POST'])
 def bring_graphs():
