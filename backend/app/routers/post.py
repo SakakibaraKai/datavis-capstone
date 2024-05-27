@@ -230,13 +230,11 @@ def create_graphs():
         graphs = get_table(city_name1, city_name2)    
         graphs_json = graphs.decode('utf-8')
         res = json.loads(graphs_json)
-        
-        print(res["id"])
         image_id = res["id"]
         
-        conn = get_db_connection()
-        if conn is None:
-            return jsonify({"error": "Could not connect to the database"}), 500
+        #conn = get_db_connection()
+        #if conn is None:
+        #    return jsonify({"error": "Could not connect to the database"}), 500
         
         with conn.cursor() as cursor:
             cursor.execute(f"USE {rds_database}")
