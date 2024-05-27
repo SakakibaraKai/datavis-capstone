@@ -6,6 +6,7 @@ This project focuses on Big Data and Cloud System Platform. The goal of this pro
 
 ## Documentation
 - [User Documentation](https://github.com/SakakibaraKai/datavis-capstone/blob/bef1c3c0818a854c92d3c1f43fd9245bcf5e449f/mdFolder/USER.md)
+- [Developer Documentation](https://github.com/SakakibaraKai/datavis-capstone/blob/9fce417a8259ccea5b54cb70ce319df596a9b301/mdFolder/DEVELOPER.md)
 - [Product Requirements Document](https://github.com/SakakibaraKai/datavis-capstone/blob/15b72197261a3b7294f6fc08ff48c9f73b6bdda8/prd.md)
 - [Software Design and Architecture](https://github.com/SakakibaraKai/datavis-capstone/blob/main/sda.md)
 - [Software Development Process](https://github.com/SakakibaraKai/datavis-capstone/blob/15b72197261a3b7294f6fc08ff48c9f73b6bdda8/sdp.md)
