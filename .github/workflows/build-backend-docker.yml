@@ -3,7 +3,7 @@ name: Docker Back
 on:
   push:
     branches:
-      - release-backend
+      - main
       
 jobs:
   build_frontend:
