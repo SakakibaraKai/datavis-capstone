@@ -1,5 +1,6 @@
 # CS 461 Capstone Project
 
+
 ## Project Overview
 This project focuses on Big Data and Cloud System Flatform. The goal of this project is that Developers will learn the basic concepts of data and framework interactions, the latest technologies in Kubernetes and CI/CD automation, while consumers will be provided with visual information with the latest weather data for the Oregon region.
 
@@ -14,6 +15,12 @@ This project focuses on Big Data and Cloud System Flatform. The goal of this pro
 - [Other necessary tools]
 
 ### Installation
+There are two ways to install get get docker immages first method is pulling dockerimmages and second is copying the directory and then dockering each part.
+
+#### Dockerhub method
+1. Go to this website and fallow the instructions https://hub.docker.com/repository/docker/depwegk/big_data_and_the_cloud/general
+
+#### Dockerizing method 2
 1. Clone this repository:
     ```bash
     git clone https://github.com/yourusername/your-repo-name.git
@@ -24,15 +31,15 @@ This project focuses on Big Data and Cloud System Flatform. The goal of this pro
     ```
 3. Install the dependencies if needed:
     ```bash
-    [installation command]
+    npm install
     ```
 
 ### Usage
-1. [Explanation on how to use or run the project]
+1. You will need to docker every repo (jupyter, frontend backend) 
     ```bash
-    [example command to run the project]
+    docker build -t <name> .
     ```
-
+2. Lanch every docker and go to localhost at port 5173
 ## Contribution
 Contributions are welcome! To contribute, please follow these steps:
 1. Fork this repository.
@@ -50,17 +57,12 @@ Contributions are welcome! To contribute, please follow these steps:
     ```
 5. Open a pull request.
 
-## License
-This project is licensed under the [License Name] License. See the `LICENSE` file for more details.
-
 ## Contact
 If you have any questions or suggestions about the project, feel free to contact:
-- Name: [Your Name]
-- Email: [Your Email Address]
+- Name: Kai Depweg
+- Email: Depwegk@oregonstate.edu
 
 ## Additional Information
-- [Link to documentation or blog post]
-- [Link to project demo]
-- [Any other relevant information]
+- https://hub.docker.com/repository/docker/depwegk/big_data_and_the_cloud/general
 
 
