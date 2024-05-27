@@ -36,7 +36,7 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-   -  uses: docker/build-push-action@v4
+    - uses: docker/build-push-action@v4
       with:
         context: jupyter/
         push: true
