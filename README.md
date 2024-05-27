@@ -2,7 +2,7 @@
 
 
 ## Project Overview
-This project focuses on Big Data and Cloud System Flatform. The goal of this project is that Developers will learn the basic concepts of data and framework interactions, the latest technologies in Kubernetes and CI/CD automation, while consumers will be provided with visual information with the latest weather data for the Oregon region.
+This project focuses on Big Data and Cloud System Platform. The goal of this project is that Developers will learn the basic concepts of data and framework interactions, the latest technologies in Kubernetes and CI/CD automation, while consumers will be provided with visual information with the latest weather data for the Oregon region.
 
 ## Documentation
 - [User Documentation](https://github.com/SakakibaraKai/datavis-capstone/blob/bef1c3c0818a854c92d3c1f43fd9245bcf5e449f/mdFolder/USER.md)
