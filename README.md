@@ -5,10 +5,10 @@
 This project focuses on Big Data and Cloud System Flatform. The goal of this project is that Developers will learn the basic concepts of data and framework interactions, the latest technologies in Kubernetes and CI/CD automation, while consumers will be provided with visual information with the latest weather data for the Oregon region.
 
 ## Documentation
--[User Documentation](https://github.com/SakakibaraKai/datavis-capstone/blob/bef1c3c0818a854c92d3c1f43fd9245bcf5e449f/mdFolder/USER.md)
--[Product Requirements Document](https://github.com/SakakibaraKai/datavis-capstone/blob/15b72197261a3b7294f6fc08ff48c9f73b6bdda8/prd.md)
--[Software Design and Architecture](https://github.com/SakakibaraKai/datavis-capstone/blob/main/sda.md)
--[Software Development Process](https://github.com/SakakibaraKai/datavis-capstone/blob/15b72197261a3b7294f6fc08ff48c9f73b6bdda8/sdp.md)
+- [User Documentation](https://github.com/SakakibaraKai/datavis-capstone/blob/bef1c3c0818a854c92d3c1f43fd9245bcf5e449f/mdFolder/USER.md)
+- [Product Requirements Document](https://github.com/SakakibaraKai/datavis-capstone/blob/15b72197261a3b7294f6fc08ff48c9f73b6bdda8/prd.md)
+- [Software Design and Architecture](https://github.com/SakakibaraKai/datavis-capstone/blob/main/sda.md)
+- [Software Development Process](https://github.com/SakakibaraKai/datavis-capstone/blob/15b72197261a3b7294f6fc08ff48c9f73b6bdda8/sdp.md)
 
 ## Installation and Usage
 ### Requirements
