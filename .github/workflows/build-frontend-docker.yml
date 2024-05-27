@@ -3,7 +3,7 @@ name: Docker Front
 on:
   push:
     branches:
-      - main
+      - feature-frontend
       
 jobs:
   
