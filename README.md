@@ -6,11 +6,13 @@ This project focuses on Big Data and Cloud System Flatform. The goal of this pro
 
 ## Documentation
 [User Documentation](https://github.com/SakakibaraKai/datavis-capstone/blob/bef1c3c0818a854c92d3c1f43fd9245bcf5e449f/mdFolder/USER.md)
+[Product Requirements Document](https://github.com/SakakibaraKai/datavis-capstone/blob/15b72197261a3b7294f6fc08ff48c9f73b6bdda8/prd.md)
+[Software Design and Architecture](https://github.com/SakakibaraKai/datavis-capstone/blob/main/sda.md)
+[Software Development Process](https://github.com/SakakibaraKai/datavis-capstone/blob/15b72197261a3b7294f6fc08ff48c9f73b6bdda8/sdp.md)
 
 ## Installation and Usage
 ### Requirements
-- [Required software and versions]
-- [Other necessary tools]
+- Docker
 
 ### Installation
 There are two ways to install get get docker immages first method is pulling dockerimmages and second is copying the directory and then dockering each part.
