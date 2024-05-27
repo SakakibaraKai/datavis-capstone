@@ -24,6 +24,17 @@ conn = mysql.connector.connect(
     database=rds_database
 )
 
+jupyter_note_host = "host.docker.internal"
+jupyter_note_port = 8000
+drawtable_url = f"http://{jupyter_note_host}:{jupyter_note_port}/drawtable"
+drawheatmap_url = f"http://{jupyter_note_host}:{jupyter_note_port}/drawheatmap"
+drawprecip_url = f"http://{jupyter_note_host}:{jupyter_note_port}/drawprecip"
+table_url = "http://localhost:8000/drawtable"
+heatmap_url = "http://localhost:8000/drawheatmap"
+precip_url = "http://localhost:8000/drawprecip"
+pychart_url = "http://localhost:8000/drawpychart"
+hurl = "http://172.17.0.2:8000/drawtable"
+
 bp = Blueprint('/gets', __name__)
 cities = ['Corvallis', 'Salem', 'Portland', 'Eugene', 'Bend', 'Beaverton', 'Hillsboro', 'Gresham', 'Lake Oswego', 'Tigard', 'Grants Pass', 'Oregon City', 'Roseburg', 'Hood River']
 
@@ -110,16 +121,6 @@ def tables():
                 }
     return jsonify({"cities_info": cities_info})
     
-@bp.route('/utable', methods = ['GET'])
-def update_tables():
-    cities_info = []
-    for city in cities:        
-        data = city_info = openAPI_info(city)
-        data['city_name'] = city
-        create_table(city, city_info)
-        cities_info.append(data)
-            #return jsonify({"return": 1})
-    return jsonify({"cities_info": cities_info})
 
 def create_table(city_name, city_info,):
     col1 = "date"
@@ -177,3 +178,10 @@ def create_table(city_name, city_info,):
         print("Error::", e)
     finally:
         return jsonify({"message": "Table successfully created"})
+
+@bp.route('/rain', methods= ['GET'])
+def precip_graphs():
+    global city_images_table  # 전역 변수로 사용
+    response = requests.get(drawprecip_url, verify = False)
+    city_images_table = response.json()
+    return city_images_table

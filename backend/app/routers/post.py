@@ -70,12 +70,6 @@ def get_db_connection():
         cursorclass=pymysql.cursors.DictCursor
     )
 
-@bp.route('/rain', methods= ['GET'])
-def precip_graphs():
-    global city_images_table  # 전역 변수로 사용
-    response = requests.get(drawprecip_url, verify = False)
-    city_images_table = response.json()
-    return city_images_table
  
 @bp.route('/validate', methods = ['POST'])
 @isAuthorized
@@ -176,20 +170,6 @@ def create_table(city_name, city_info):
         print("Error::", e)
     finally:
         return jsonify({"message": "Table successfully created"})
-
-@bp.route('/checktable', methods = ['GET'])
-def check_table():
-    cursor = conn.cursor()
-    cursor.execute("SHOW TABLES")
-    tables = cursor.fetchall()
-    print("Tables in the database:")
-    for table in tables:
-        print(table[0])
-
-    cursor.close()  # 커서 닫기
-
-    return {"Success" : "Table was created!"}
-
 
 # 리스트 형식으로 반환
 def get_lat_lon(city_name):
