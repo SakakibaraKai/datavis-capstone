@@ -3,7 +3,7 @@ name: Docker Front
 on:
   push:
     branches:
-      - feature-frontend
+      - main
       
 jobs:
   
@@ -27,7 +27,8 @@ jobs:
     - name: builder the docker image
       run: |
         cd frontend
-        docker buildx build --platform linux/amd64,linux/arm64 -t depwegk/big_data_and_the_cloud:frontend_latest .
+        docker build -t frontend .
+        #docker buildx build --platform linux/amd64,linux/arm64 -t depwegk/big_data_and_the_cloud:frontend_latest .
 
     - name: Login to Dockerhub
       uses: docker/login-action@v2
@@ -41,4 +42,4 @@ jobs:
         context: frontend/
         push: true
         tags: depwegk/big_data_and_the_cloud:frontend_latest
-        platforms: linux/amd64,linux/arm64
+        #platforms: linux/amd64,linux/arm64
