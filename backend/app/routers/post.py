@@ -28,13 +28,12 @@ precip_url = "http://localhost:8000/drawprecip"
 pychart_url = "http://localhost:8000/drawpychart"
 hurl = "http://172.17.0.2:8000/drawtable"
 
-# 연결에 필요한 정보
 rds_host = 'capstone-database.c5ys4ks8sbyz.us-west-2.rds.amazonaws.com'
 rds_port = 3306
-rds_user = 'admin'  # 사용자명 입력
-rds_password = 'capstone'  # 비밀번호 입력
-rds_database = 'capstone'  # 데이터베이스 이름 입력
-# AWS RDS에 데이터베이스 연결
+rds_user = 'admin' 
+rds_password = 'capstone'  
+rds_database = 'capstone'  
+
 conn = mysql.connector.connect(
     host=rds_host,
     port=rds_port,
@@ -146,7 +145,6 @@ def create_table(city_name, city_info):
 
             cursor.execute(sql)
             
-            # JSON 데이터에서 내용 추출 및 쿼리 실행
             for data in city_info['list']:
                 dt_txt = data['dt_txt']
                 date, time = dt_txt.split()
@@ -158,7 +156,7 @@ def create_table(city_name, city_info):
                 description = data['weather'][0]['description']
                 #print("==",date, time, max_temp, min_temp, pop, pressure, humidity, description)
 
-                # 쿼리 작성 및 실행
+                
                 insert_sql = f"INSERT INTO `{city_name}` ({col1}, {col2}, {col3}, {col4}, {col5}, {col6}, {col7}, {col8}) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
                 cursor.execute(insert_sql, (date, time, max_temp, min_temp, pop, pressure, humidity, description))
                 conn.commit()
@@ -171,7 +169,6 @@ def create_table(city_name, city_info):
     finally:
         return jsonify({"message": "Table successfully created"})
 
-# 리스트 형식으로 반환
 def get_lat_lon(city_name):
     url = f"https://api.openweathermap.org/geo/1.0/direct?q={city_name}&limit=1&appid={api_key}"
     response = requests.get(url)
@@ -188,14 +185,14 @@ def openAPI_info(city_name):
     response_1 = requests.get(url_1)
     response_1.raise_for_status()
     data_1 = response_1.json()
-    # 위도 및 경도 추출
+    
     lat = data_1[0]['lat']
     lon = data_1[0]['lon']
     print("==city_name: ", city_name, "==lat: ", lat, "==lon: ", lon)
-    # 두 번째 API 호출
+
     url_2 = f"https://api.openweathermap.org/data/2.5/forecast?lat={lat}&lon={lon}&appid={api_key}"
     response_2 = requests.get(url_2)
-    response_2.raise_for_status()  # 오류가 발생하면 예외를 발생시킵니다.
+    response_2.raise_for_status() 
     data_2 = response_2.json()
     return data_2
 
@@ -230,11 +227,10 @@ def create_graphs():
         city_name1 = content['city_name1']
         city_name2 = content['city_name2']
 
-        # 그래프 얻어오기
-        graphs = get_table(city_name1, city_name2)
-        # graphs를 문자열로 디코딩하여 JSON 객체로 변환
+        graphs = get_table(city_name1, city_name2)    
         graphs_json = graphs.decode('utf-8')
         res = json.loads(graphs_json)
+        
         print(res["id"])
         image_id = res["id"]
         
@@ -245,7 +241,6 @@ def create_graphs():
         with conn.cursor() as cursor:
             cursor.execute(f"USE {rds_database}")
 
-            # 데이터 저장 완료 확인
             attempts = 0
             max_attempts = 5
             while attempts < max_attempts:
@@ -273,7 +268,7 @@ def bring_graphs():
     if request.method == 'POST':
         content = request.get_json()
         city_name = content['cityName']
-        table_name = f"{city_name}_images"  # 테이블 이름을 동적으로 구성
+        table_name = f"{city_name}_images"  
         print(table_name)
         image_data_dict = {}
         ids = city_images_table.get(city_name, [])
