@@ -1,4 +1,4 @@
-# CS 461 Capstone Project 
+# CS 461 Capstone Project
 
 
 ## Project Overview
