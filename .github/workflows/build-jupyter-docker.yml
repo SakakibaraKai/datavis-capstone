@@ -35,10 +35,9 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-    - name: Push DockerImage
-      uses: docker/build-push-action@v4
-      with:
-        context: jupyter/
-        push: true
-        tags: depwegk/big_data_and_the_cloud:jupyter_latest
-        platforms: linux/amd64,linux/arm64
+    #-  uses: docker/build-push-action@v4
+    #  with:
+    #    context: jupyter/
+    #    push: true
+    #    tags: depwegk/big_data_and_the_cloud:jupyter_latest
+    #    platforms: linux/amd64,linux/arm64
