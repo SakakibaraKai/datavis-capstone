@@ -9,8 +9,6 @@ import styled from '@emotion/styled'
 import { css } from '@emotion/react'
 import DataAnalysis from '../components/DataAnalysis.jsx'
 import GoogleMap from '../components/GoogleMap.jsx'
-import res from '../data/response.json';
-import graphs from '../data/graphs.json'
 // Redux
 import { useDispatch, useSelector } from 'react-redux'
 import { updateImages, selectImages } from '../redux/imagesSlice.js'
@@ -121,8 +119,6 @@ export default function CreateTable() {
         const controller = new AbortController();
         // cityName1 이 빈 배열 || (compareCity 가 참이고 동시에 cityName2가 빈 배열)
         dispatch(openbutton())
-        setCityName1(cities['cityName1'])
-        setCityName2(cities['cityName2'])
 
         dispatch(SubmitLocations({"city_name1": cityName1, "city_name2": cityName2}))
 
@@ -226,6 +222,7 @@ export default function CreateTable() {
         // 예시: cityName1이 변경될 때마다 someState를 업데이트합니다.
         setCityName1(updated_cityName1);
         setCityName2(updated_cityName2);
+        
     }, [updated_cityName1, updated_cityName2]); // cityName1 변수를 의존성 배열에 포함시켜 변경될 때마다 useEffect가 실행되도록 합니다.
 
     
