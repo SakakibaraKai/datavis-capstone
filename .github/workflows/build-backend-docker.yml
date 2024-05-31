@@ -27,7 +27,7 @@ jobs:
       run: |
         cd backend
         docker build -t backend .
-        #docker buildx build --platform linux/amd64,linux/arm64 -t depwegk/big_data_and_the_cloud:backend_latest .
+        #docker buildx build --platform linux/amd64, linux/arm64, linux/arm/v7, linux/arm/v6 -t depwegk/big_data_and_the_cloud:backend_latest .
         
     - name: Login to Dockerhub
       uses: docker/login-action@v2
@@ -41,4 +41,5 @@ jobs:
         context: backend/
         push: true
         tags: depwegk/big_data_and_the_cloud:backend_latest
+        Platforms: linux/amd64, linux/arm64, linux/arm/v7, linux/arm/v6
         #platforms: linux/amd64,linux/arm64
