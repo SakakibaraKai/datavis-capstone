@@ -52,10 +52,26 @@ const locationsSlice = createSlice({
                 cityName1: city_name1,
                 cityName2: city_name2
             };
-        }
+        },
+        updateCity1(state, action) {
+            const city_info = action.payload;
+            const city_name1 = city_info['city_name1']
+            return {
+                ...state,
+                cityName1: city_name1,
+            };
+        },
+        updateCity2(state, action) {
+            const city_info = action.payload;
+            const city_name2 = city_info['city_name2']
+            return {
+                ...state,
+                cityName2: city_name2
+            };
+        }  
     }
 })
 
 export default locationsSlice.reducer 
-export const { updateLocation, SubmitLocations } = locationsSlice.actions
+export const { updateLocation, SubmitLocations, updateCity1, updateCity2 } = locationsSlice.actions
 export const selectLocations = locationsSlice.selectSlice

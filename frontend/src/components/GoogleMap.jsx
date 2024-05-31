@@ -137,7 +137,6 @@ export default function GoogleMap() {
     const dispatch = useDispatch();
 
     const handleClickLocation = (location) => {
-        console.log("Location clicked:", location);
         dispatch(updateLocation({"city_name": location}))
     }
     
@@ -230,6 +229,7 @@ export default function GoogleMap() {
 
     useEffect(() => {
         // cities가 변경될 때마다 마커를 업데이트합니다.
+        //console.log("== cities:", cities)
         const newMarkers = [];
 
         // cities_info 객체의 키를 필터링하여 null이 아닌 도시만 선택합니다.
@@ -241,7 +241,7 @@ export default function GoogleMap() {
             if (cityInfo && cityInfo.lat !== null && cityInfo.lon !== null) {
                 const lat = cityInfo.lat;
                 const lon = cityInfo.lon;
-                console.log("City:", cityName, "Lat:", lat, "Lon:", lon);
+                //console.log("City:", cityName, "Lat:", lat, "Lon:", lon);
                 newMarkers.push({
                     cityName: cityName,
                     position: [lat, lon]
@@ -252,9 +252,7 @@ export default function GoogleMap() {
         });
 
         setMarkers(newMarkers);
-    }, [cities]);
 
-    useEffect(() => {
         const initMap = () => {
             const map = new google.maps.Map(document.getElementById("map"), {
                 center: { lat: 44.5646, lng: -122.5 },
@@ -262,7 +260,7 @@ export default function GoogleMap() {
                 mapId: "4504f8b37365c3d0",
             });
             
-            markers.forEach(marker => {
+            newMarkers.forEach(marker => {
                 const googleMarker = new google.maps.Marker({
                     position: { lat: marker.position[0], lng: marker.position[1] },
                     map: map,
@@ -277,8 +275,6 @@ export default function GoogleMap() {
             });
         };
 
-
-
         // Google Maps API 스크립트를 동적으로 로드하고 initMap 함수를 window 객체에 할당
         const script = document.createElement('script');
         script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyC1aB2jdQ76fRfyg2QefEKh2bbVNinoZzo&callback=initMap`;
@@ -292,7 +288,10 @@ export default function GoogleMap() {
             document.head.removeChild(script);
             delete window.initMap;
         };
+
     }, [cities]);
+
+
 
     return (
         // 이 DIV는 구글 맵을 보여준다
@@ -318,7 +317,6 @@ export default function GoogleMap() {
                                     <BoldText> Precipitation: {todayPrecip}%</BoldText>
                                 </div>
                                 <LocationInfo>
-                                    {console.log(currentlocation)}
                                     <BoldWhiteTextWithTooltip text={currentlocation}/>
                                 </LocationInfo>
                             </TodayInfo>
@@ -356,7 +354,6 @@ export default function GoogleMap() {
                                             alignItems: 'center', // 이미지와 텍스트를 수직으로 가운데 정렬합니다.
                                         }}
                                     >
-                                        {console.log(icons[visualization[date]['description']])}
                                         <img 
                                             src={`http://openweathermap.org/img/wn/${icons[visualization[date]['description']]}@2x.png`} 
                                             alt={`weather_icon_${date}`} 
