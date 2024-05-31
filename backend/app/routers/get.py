@@ -42,6 +42,13 @@ cities = ['Corvallis', 'Salem', 'Portland', 'Eugene', 'Bend', 'Beaverton', 'Hill
 def root():
     return {'main': 'this is the main route'}
 
+@bp.route('/rain', methods= ['GET'])
+def precip_graphs():
+    global city_images_table  # 전역 변수로 사용
+    response = requests.get(drawprecip_url, verify = False)
+    city_images_table = response.json()
+    return city_images_table
+
 @bp.route('/tablelist', methods = ['GET', 'POST'])
 def show_tables():
     if request.method == 'GET':
@@ -178,10 +185,3 @@ def create_table(city_name, city_info,):
         print("Error::", e)
     finally:
         return jsonify({"message": "Table successfully created"})
-
-@bp.route('/rain', methods= ['GET'])
-def precip_graphs():
-    global city_images_table  # 전역 변수로 사용
-    response = requests.get(drawprecip_url, verify = False)
-    city_images_table = response.json()
-    return city_images_table

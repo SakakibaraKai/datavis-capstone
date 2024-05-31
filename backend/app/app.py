@@ -4,6 +4,7 @@ from flask import Flask, render_template, session
 from dotenv import load_dotenv, find_dotenv
 from os import environ as env
 from flask_cors import CORS
+import requests
 
 app = Flask(__name__)
 app.register_blueprint(get.bp)
@@ -14,6 +15,7 @@ CORS(app, resources={r"/*": {"origins": "*"}})
 ENV_FILE = find_dotenv("APP_SECRET_KEY")
 if ENV_FILE:
     load_dotenv(ENV_FILE)
+
 
 app.secret_key = env.get("APP_SECRET_KEY")
 
