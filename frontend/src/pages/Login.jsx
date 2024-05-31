@@ -1,14 +1,34 @@
-import { useEffect, useState } from "react"
+import React, { useEffect, useState } from "react"
 import { Outlet } from "react-router-dom"
 import { AuthContext } from '../auth-context';
 import{ useContext } from 'react';
 import { jwtDecode } from 'jwt-decode'
+import styled from '@emotion/styled'
+import Spinner from '../components/Spinner.jsx'
+import ErrorContainer from '../components/ErrorContainer.jsx'
+
+// 버튼 스타일 정의
+const ButtonStyle = styled.input`
+    margin-bottom: 10px;
+    width: 30vw;    // vw: 가로 너비가 줄어들게 함
+    height: 3vh;    
+    border-radius: 20px;
+    text-align: center;  // 텍스트 관련요소
+    cursor: pointer; // 마우스 커서가 포인터로 변경
+`;
+
+const Loading = styled.div`
+  align-items: center;
+  flex-direction: column;
+`
 
 const Login = () => {
     const { loggedIn, status } = useContext(AuthContext);
     const [failure, setFailure ] = useState(false);
     const [createfailure, setCreateFailure] = useState(false);
     const [createSuccess, setCreateSuccess] = useState(false);
+    const [ loading, setLoading ] = useState(false);
+    const [ error, setError ] = useState(null);
 
     const [formData, setFormData] = useState({
         "email": "",
@@ -109,6 +129,43 @@ const Login = () => {
             setFailure(true)
         })
     }
+
+    const handleRainRequest = () => {
+        setLoading(true)
+        fetch('http://localhost:8080/rain')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log(data);
+                setLoading(false)
+                alert('Rain data requested successfully');
+            })
+            .catch(error => {
+                console.error('There was an error requesting the rain data!', error);
+                alert('Failed to request rain data');
+            });
+    };
+    
+    const handleUpdateDatabaseRequest = async() => {
+        setLoading(true)
+        const controller = new AbortController();
+        try {
+            const response = await fetch('http://localhost:8080/update-database', {
+                method: 'GET',
+                signal: controller.signal
+            })
+            const res = await response.json();
+            setLoading(false)
+        }catch(error) {
+            console.error("Update error", error);
+        }finally {
+            alert('Database updated successfully');
+        }
+    };
     
     if (!loggedIn) {
         return (
@@ -146,8 +203,28 @@ const Login = () => {
                         {createSuccess && <label className="success">Success!</label>}
                         <button>Create User</button>
                     </form>
+
                 </div>}
                 <h1 className="logout" onClick={handleLogOut}>Logout</h1>
+                {Boolean(user.is_admin) && 
+                            <div>
+                            <ButtonStyle 
+                                type="button" 
+                                value="Request Graphs" 
+                                onClick={handleRainRequest} 
+                            />
+                            <ButtonStyle 
+                                type="button" 
+                                value="Update Database" 
+                                onClick={handleUpdateDatabaseRequest} 
+                            />
+                        </div>
+                
+                }
+                <Loading>
+                    {error && <ErrorContainer />}
+                    {loading && <Spinner />}
+                </Loading>
                 <Outlet />
             </div>
         )
