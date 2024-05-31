@@ -67,6 +67,39 @@ const CloseButton = styled.button`
 export default function DataAnalysis() {
     const [index, setIndex] = useState(0);
     const dispatch = useDispatch();
+    const graphslist = useSelector(selectImages)
+    const [humidity_image, setHumidity] = useState('')
+    const [max_temp_image, setMaxTemp] = useState('')
+    const [min_temp_image, setMinTemp] = useState('')
+    const [pressure_image, setPressure] = useState('')
+    const graphs_name = [
+        "Humidity Comparison",
+        "Max Temperature Comparison",
+        "Min Temperature Comparison",
+        "Pressure Comparison"
+    ];
+
+    const getCurrentImage = () => {
+        switch (index) {
+            case 0:
+                return humidity_image;
+            case 1:
+                return max_temp_image;
+            case 2:
+                return min_temp_image;
+            case 3:
+                return pressure_image;
+            default:
+                return '';
+        }
+    };
+
+    useEffect(() => {
+        setHumidity(`data:image/png;base64,${graphslist['humidity_image']}`)
+        setMaxTemp(`data:image/png;base64,${graphslist['max_temp_image']}`)
+        setMinTemp(`data:image/png;base64,${graphslist['min_temp_image']}`)
+        setPressure(`data:image/png;base64,${graphslist['pressure_image']}`)
+    }, [graphslist])
 
     const handleCloseButtonClick = () => {
         dispatch(closebutton())
@@ -80,34 +113,8 @@ export default function DataAnalysis() {
         setIndex(prevIndex => (prevIndex === graphs.length - 1 ? 0 : prevIndex + 1));
     };
 
-    const graphslist = useSelector(selectImages)
-    //const [ visualization, setVisualization ] = useState[{}] 
-    //console.log("==graph", graphslist)
+    const graphs = [humidity_image, max_temp_image, min_temp_image, pressure_image];
 
-    // 이미지 데이터를 바로 사용하기
-    const humidityImageUrl = `data:image/png;base64,${graphslist['humidity_image']}`;
-      // 다른 이미지도 동일한 방법으로 처리
-    const tempMaxImageUrl = `data:image/png;base64,${graphslist['max_temp_image']}`;
-    //setTempMaxImage(tempMaxImageUrl);
-
-    const tempMinImageUrl = `data:image/png;base64,${graphslist['min_temp_image']}`;
-
-    const pressureImageUrl = `data:image/png;base64,${graphslist['pressure_image']}`;
-     // setPressureImage(pressureImageUrl);
-
-    const graphs = [
-      `data:image/png;base64,${graphslist['humidity_image']}`,
-      `data:image/png;base64,${graphslist['max_temp_image']}`,
-      `data:image/png;base64,${graphslist['min_temp_image']}`,
-      `data:image/png;base64,${graphslist['pressure_image']}`
-    ];
-
-    const graphs_name = [
-        "Humidity Comparison",
-        "Max Temperature Comparison",
-        "Min Temperature Comparison",
-        "Pressure Comparison"
-      ];
     return (
         <Visualization>
             <CloseButton onClick={handleCloseButtonClick}>X</CloseButton> 
@@ -116,7 +123,7 @@ export default function DataAnalysis() {
                 <NavigationButton onClick={prevGraph}>
                     <Icon path={mdiChevronLeft} size={1} />
                 </NavigationButton>
-                <GraphImage src={graphs[index]} alt="Graph" />
+                <GraphImage src={getCurrentImage()} alt="Graph" />
                 <NavigationButton onClick={nextGraph}>
                     <Icon path={mdiChevronRight} size={1} />
                 </NavigationButton>
