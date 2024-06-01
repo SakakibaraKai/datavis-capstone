@@ -42,4 +42,8 @@ jobs:
         context: frontend/
         push: true
         tags: depwegk/big_data_and_the_cloud:frontend_latest
-        #platforms: linux/amd64,linux/arm64
+        platforms: linux/amd64,linux/arm64
+        build-args: --progress=plain
+
+    - name: Logout from Docker Hub
+      run: docker logout
